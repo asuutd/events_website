@@ -23,7 +23,7 @@ const Modal = ({
 	const codeQuery = trpc.code.getCode.useMutation({
 		onSuccess: (data) => {
 			if (data) {
-				let ticket = tickets.find((ticket) => ticket.tier.id === data?.tierId);
+				const ticket = tickets.find((ticket) => ticket.tier.id === data?.tierId);
 				if (ticket !== undefined) {
 					if (ticket.quantity > 1) {
 						alert(' Only one ticket is allowed for this code type');
@@ -107,8 +107,11 @@ const Modal = ({
 								</div>
 
 								<div className="mt-2">
-									{tickets.map((ticket) => (
-										<div className="flex justify-between items-center p-4 shadow-md rounded-md bg-base-200 my-3">
+									{tickets.map((ticket, idx) => (
+										<div
+											key={idx}
+											className="flex justify-between items-center p-4 shadow-md rounded-md bg-base-200 my-3"
+										>
 											<div className="text-xl font-semibold text-primary">{ticket.tier.name}</div>
 
 											<div className="flex items-center gap-6 justify-between">

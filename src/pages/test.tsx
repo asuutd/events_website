@@ -1,10 +1,11 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { NextPage } from 'next/types';
 import React, { Fragment, useEffect, useState } from 'react';
 import Modal from '../components/Modal';
 
-const test = () => {
-	let [isOpen, setIsOpen] = useState(true);
+const Test: NextPage = () => {
+	const [isOpen, setIsOpen] = useState(true);
 
 	function closeModal() {
 		setIsOpen(false);
@@ -81,4 +82,4 @@ const test = () => {
 	);
 };
 
-export default test;
+export default Test;

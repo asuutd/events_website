@@ -1,6 +1,7 @@
 import React, { MouseEvent } from 'react';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 const Navbar = () => {
 	const { data: session, status } = useSession();
@@ -11,10 +12,12 @@ const Navbar = () => {
 	return (
 		<div className="navbar bg-base-100">
 			<div className="flex-1">
-				<a className="btn btn-ghost normal-case text-xl" href="/">
-					<img src="/pic_4.png" alt="ASU" className="h-10 w-10" />
-					Events
-				</a>
+				<Link className="btn btn-ghost normal-case text-xl" href="/">
+					<a className="flex items-center gap-1">
+						<img src="/pic_4.png" alt="ASU" className="h-10 w-10" />
+						Events
+					</a>
+				</Link>
 			</div>
 			<div className="flex-none gap-2">
 				<div className="dropdown dropdown-end">
@@ -71,7 +74,7 @@ const Navbar = () => {
 								className="menu menu-compact dropdown-content mt-3 p-2 shadow-lg bg-base-100 rounded-box w-52"
 							>
 								<li>
-									<a href="/tickets">Tickets</a>
+									<Link href="/tickets">Tickets</Link>
 								</li>
 
 								<li>

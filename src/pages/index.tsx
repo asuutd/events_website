@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { trpc } from '../utils/trpc';
+import Link from 'next/link';
 
 const Home: NextPage = () => {
 	const hello = trpc.example.hello.useQuery({ text: 'from tRPC' });
@@ -26,9 +27,9 @@ const Home: NextPage = () => {
 								Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
 								exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
 							</p>
-							<a className="btn btn-secondary" href="/events/cl8qqtng90000uhh43mefp5d8">
+							<Link className="btn btn-secondary" href="/events/cl8qqtng90000uhh43mefp5d8">
 								Get your Tickets
-							</a>
+							</Link>
 						</div>
 					</div>
 				</div>

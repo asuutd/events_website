@@ -5,7 +5,7 @@ import type { BuiltInProviderType } from 'next-auth/providers';
 import { useState } from 'react';
 import { env } from '../env/client.mjs';
 
-const loginForm = ({
+const LoginForm = ({
 	providers
 }: {
 	providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null;
@@ -119,4 +119,4 @@ const loginForm = ({
 	);
 };
 
-export default loginForm;
+export default LoginForm;

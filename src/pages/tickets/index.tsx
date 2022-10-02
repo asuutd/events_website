@@ -1,4 +1,5 @@
 import { Tab } from '@headlessui/react';
+import { NextPage } from 'next/types';
 import React, { useEffect, useState } from 'react';
 import { trpc } from '../../utils/trpc';
 
@@ -6,7 +7,7 @@ function classNames(...classes: string[]) {
 	return classes.filter(Boolean).join(' ');
 }
 
-const Ticket = () => {
+const Ticket: NextPage = () => {
 	const [past, setPast] = useState<any[]>([]);
 	const [upcoming, setUpcoming] = useState<any[]>([]);
 	const ticket = trpc.ticket.getTicket.useQuery(undefined, {

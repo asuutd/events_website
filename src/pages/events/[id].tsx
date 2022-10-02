@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { NextPage } from 'next/types';
 import React, { Fragment, useEffect, useState } from 'react';
 import Modal from '../../components/Modal';
 import { useModalStore } from '../../utils/modalStore';
@@ -21,7 +22,7 @@ enum UpOrDown {
 	Desc = 'Descending'
 }
 
-const Event = () => {
+const Event: NextPage = () => {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	//const [modalOpen, setModalOpen] = useState(false);
@@ -34,7 +35,7 @@ const Event = () => {
 
 	const [tickets, setTickets] = useState<Ticket[]>([]);
 
-	let [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 
 	function closeModal() {
 		setIsOpen(false);
@@ -50,8 +51,7 @@ const Event = () => {
 	const tiers = trpc.tier.getTiers.useQuery(
 		{ eventId: eventId },
 		{
-			refetchInterval: false,
-			onSuccess(data) {}
+			refetchInterval: false
 		}
 	);
 
@@ -64,10 +64,10 @@ const Event = () => {
 	}, [tickets]);
 	const setTicketQuantity = (val: number, dir: UpOrDown, tier: Tier) => {
 		const newTickets = [...tickets];
-		let newTicket = newTickets.find((ticket) => ticket.tier.id === tier.id);
+		const newTicket = newTickets.find((ticket) => ticket.tier.id === tier.id);
 
 		if (newTicket === undefined) {
-			let newTicket2: Ticket = { tier: tier, amount: tier.price, quantity: 1 };
+			const newTicket2: Ticket = { tier: tier, amount: tier.price, quantity: 1 };
 			//setQuantity(quantity + 1);
 			setTickets([...tickets, newTicket2]);
 			setCheckout(true);
@@ -146,7 +146,10 @@ const Event = () => {
 						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Tickets</h2>
 						{tiers.data &&
 							tiers.data.map((tier) => (
-								<div className="flex flex-col lg:flex-row justify-between mx-2 gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3">
+								<div
+									key={tier.id}
+									className="flex flex-col lg:flex-row justify-between mx-2 gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"
+								>
 									<div className="font-semibold">{tier.name}</div>
 
 									<div className="flex items-center gap-6">
