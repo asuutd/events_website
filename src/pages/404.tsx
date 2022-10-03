@@ -7,7 +7,6 @@ const ErrorPage = () => {
 			<h2 className="text-secondary text-7xl text-center">:(</h2>
 			<p>Life is hard as a sole developer. Don't make it harder</p>
 			<Link href="/" className="underline text-center">
-				{' '}
 				Go home
 			</Link>
 		</div>
