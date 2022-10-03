@@ -1,8 +1,10 @@
 import { Tab } from '@headlessui/react';
-import type { Ticket, Event } from '@prisma/client';
+import type { Ticket, Event, Tier } from '@prisma/client';
 import Head from 'next/head';
 import { NextPage } from 'next/types';
 import React, { useEffect, useState } from 'react';
+import Modal from '../../components/Modal';
+import TicketDetails from '../../components/TicketDetails';
 import { trpc } from '../../utils/trpc';
 
 function classNames(...classes: string[]) {
@@ -11,11 +13,14 @@ function classNames(...classes: string[]) {
 
 type TicketWithEventData = Ticket & {
 	event: Event;
+	tier: Tier;
 };
 
 const Ticket: NextPage = () => {
 	const [past, setPast] = useState<TicketWithEventData[]>([]);
 	const [upcoming, setUpcoming] = useState<TicketWithEventData[]>([]);
+	const [isOpen, setIsOpen] = useState(false);
+	const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
 	const ticket = trpc.ticket.getTicket.useQuery(undefined, {
 		onSuccess: (data) => {
 			const [small, large] = // Use "deconstruction" style assignment
@@ -41,7 +46,7 @@ const Ticket: NextPage = () => {
 				<Tab.Group>
 					<Tab.List className="flex space-x-1 rounded-xl bg-primary/20 p-1">
 						<Tab
-							key={'past'}
+							key={'upcoming'}
 							className={({ selected }) =>
 								classNames(
 									'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-primary',
@@ -55,7 +60,7 @@ const Ticket: NextPage = () => {
 							Upcoming
 						</Tab>
 						<Tab
-							key={'upcoming'}
+							key={'past'}
 							className={({ selected }) =>
 								classNames(
 									'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-primary',
@@ -86,17 +91,21 @@ const Ticket: NextPage = () => {
 													alt=""
 													className="w-32 h-32 object-cover rounded-md"
 												/>
-												<h3 className=" font-semibold leading-5 text-xl uppercase ">
-													{ticket.event.name}
-												</h3>
-
-												<a
-													href={`/events/${ticket.event.id}`}
-													className={classNames(
-														'absolute inset-0 rounded-md',
-														'ring-blue-400 focus:z-10 focus:outline-none focus:ring-2'
-													)}
-												/>
+												<div>
+													<h3 className=" font-bold leading-5 text-2xl uppercase my-2 text-right">
+														{ticket.event.name}
+													</h3>
+													<h4 className="my-2 text-right">{ticket.tier.name || 'Free Ticket'}</h4>
+													<button
+														className="btn btn-sm ml-auto flex justify-self-center"
+														onClick={() => {
+															setSelectedTicket(ticket.id);
+															setIsOpen(true);
+														}}
+													>
+														SHOW PASS
+													</button>
+												</div>
 											</div>
 										</li>
 									))}
@@ -120,21 +129,28 @@ const Ticket: NextPage = () => {
 													alt=""
 													className="w-32 h-32 object-cover rounded-md"
 												/>
-												<h3 className=" font-semibold leading-5 text-xl uppercase ">
-													{ticket.event.name}
-												</h3>
-
-												<a
-													href={`/events/${ticket.event.id}`}
-													className={classNames(
-														'absolute inset-0 rounded-md',
-														'ring-blue-400 focus:z-10 focus:outline-none focus:ring-2'
-													)}
-												/>
+												<div>
+													<h3 className=" font-bold leading-5 text-2xl uppercase my-2 text-right">
+														{ticket.event.name}
+													</h3>
+													<h4 className="my-2 text-right">{ticket.tier.name || 'Free Ticket'}</h4>
+													<button
+														className="btn btn-sm ml-auto flex justify-self-center"
+														onClick={() => {
+															setSelectedTicket(ticket.id);
+															setIsOpen(true);
+														}}
+													>
+														SHOW PASS
+													</button>
+												</div>
 											</div>
 										</li>
 									))}
 								</ul>
+								<Modal isOpen={isOpen} closeModal={() => setIsOpen(false)}>
+									<TicketDetails ticketId={selectedTicket || ':)'} />
+								</Modal>
 							</Tab.Panel>
 						)}
 					</Tab.Panels>

@@ -72,7 +72,8 @@ export const ticketRouter = t.router({
 				userId: ctx.session.user.id
 			},
 			include: {
-				event: true
+				event: true,
+				tier: true
 			}
 		});
 	})
