@@ -4,10 +4,13 @@ import { AnimatePresence } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next/types';
 import React, { Fragment, useEffect, useState } from 'react';
 import Modal from '../../components/Modal';
+import RefCode from '../../components/RefCode';
+import TicketSummary from '../../components/TicketSummary';
 import { useModalStore } from '../../utils/modalStore';
 import { trpc } from '../../utils/trpc';
 
@@ -36,6 +39,15 @@ const Event: NextPage = () => {
 	const [tickets, setTickets] = useState<Ticket[]>([]);
 
 	const [isOpen, setIsOpen] = useState(false);
+
+	const [isRefOpen, setIsRefOpen] = useState(false);
+
+	function closeRefModal() {
+		setIsRefOpen(false);
+	}
+	function openRefModal() {
+		setIsRefOpen(true);
+	}
 
 	function closeModal() {
 		setIsOpen(false);
@@ -173,14 +185,20 @@ const Event: NextPage = () => {
 								</div>
 							))}
 						{status === 'authenticated' ? (
-							<button
-								className={`flex my-6 mx-2 btn btn-primary justify-self-center btn-lg ${
-									!checkout && 'btn-disabled'
-								}`}
-								onClick={openModal}
-							>
-								CHECKOUT
-							</button>
+							<div className="flex justify-between items-end">
+								<button
+									className={`flexmx-2 btn btn-primary justify-self-center btn-lg ${
+										!checkout && 'btn-disabled'
+									}`}
+									onClick={openModal}
+								>
+									CHECKOUT
+								</button>
+
+								<button className="text-xs underline" onClick={openRefModal}>
+									Want a referral code?
+								</button>
+							</div>
 						) : status === 'loading' ? (
 							<button
 								className={`flex my-6 mx-2 btn btn-primary justify-self-center btn-lg btn-disabled`}
@@ -198,7 +216,13 @@ const Event: NextPage = () => {
 							</label>
 						)}
 
-						<Modal isOpen={isOpen} closeModal={closeModal} tickets={tickets} eventId={eventId} />
+						<Modal isOpen={isOpen} closeModal={closeModal}>
+							<TicketSummary isOpen={isOpen} tickets={tickets} eventId={eventId} />
+						</Modal>
+
+						<Modal isOpen={isRefOpen} closeModal={closeRefModal}>
+							<RefCode eventId={eventId} />
+						</Modal>
 					</div>
 
 					<div className="hidden lg:block">

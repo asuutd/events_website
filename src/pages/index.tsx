@@ -27,8 +27,8 @@ const Home: NextPage = () => {
 								Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
 								exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
 							</p>
-							<Link className="btn btn-secondary" href="/events/cl8qqtng90000uhh43mefp5d8">
-								Get your Tickets
+							<Link href="/events/cl8r36itw0000uh8sjkoy3uo7">
+								<a className="btn btn-primary">Get your Tickets</a>
 							</Link>
 						</div>
 					</div>

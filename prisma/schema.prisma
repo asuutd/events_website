@@ -71,6 +71,7 @@ model Event {
   end     DateTime
   name    String
   image   String?
+  ref_quantity Int?
   tickets Ticket[]
   RefCode RefCode[]
   Tier    Tier[]
@@ -79,16 +80,16 @@ model Event {
 model Ticket {
   id          String    @id @default(cuid())
   codeId      String?
-  tierId      String
+  tierId      String?
   eventId     String
   userId      String
   refCodeId   Int?
   checkedInAt DateTime?
   createdAt   DateTime  @default(now())
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  tier        Tier      @relation(fields: [tierId], references: [id], onDelete: Cascade)
-  refCode     RefCode?  @relation(fields: [refCodeId], references: [id], onDelete: Cascade)
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: NoAction)
+  tier        Tier?      @relation(fields: [tierId], references: [id], onDelete: NoAction)
+  refCode     RefCode?  @relation(fields: [refCodeId], references: [id], onDelete: NoAction)
 }
 
 model Code {
@@ -115,10 +116,11 @@ model Tier {
 model RefCode {
   id      Int      @id @default(autoincrement())
   code    String
-  usage   Int
   userId  String
   eventId String
   tickets Ticket[]
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
 }

@@ -2,12 +2,14 @@ import React, { MouseEvent } from 'react';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const Navbar = () => {
+	const router = useRouter();
 	const { data: session, status } = useSession();
 	const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
 		//assertConfiguration().close(); //Close Ably Client on Logout
-		signOut({ redirect: true, callbackUrl: '/' });
+		signOut({ redirect: true, callbackUrl: router.pathname });
 	};
 	return (
 		<div className="navbar bg-base-100">
