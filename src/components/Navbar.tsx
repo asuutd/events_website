@@ -46,21 +46,14 @@ const Navbar = () => {
 								<label tabIndex={0} className="btn m-1 btn-primary">
 									SIGN IN
 								</label>
-								<ul
-									tabIndex={0}
-									className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-								>
+								<ul tabIndex={0} className="dropdown-content menu  rounded-box w-52">
 									{providers &&
 										Object.values(providers)
 											.filter((provider) => provider.name != 'Credentials')
 											.map((provider) => (
 												<li key={provider.name} className=" justify-center">
 													<button
-														className={`w-auto rounded-md gap-1 content-center px-2 py-3 my-2 justify-start ${
-															provider.id === 'facebook'
-																? 'bg-[#1778F2] text-white'
-																: 'bg-slate-200 text-black'
-														}`}
+														className={` shadow-md w-auto rounded-md gap-1  content-between px-2 py-3 my-2 justify-start bg-base-100 text-black`}
 														onClick={() => signIn(provider.id, { callbackUrl: router.pathname })}
 													>
 														<img
