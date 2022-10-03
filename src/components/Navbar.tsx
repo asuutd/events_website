@@ -1,10 +1,27 @@
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { signOut, useSession } from 'next-auth/react';
+import {
+	ClientSafeProvider,
+	getProviders,
+	LiteralUnion,
+	signIn,
+	signOut,
+	useSession
+} from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { BuiltInProviderType } from 'next-auth/providers';
 
 const Navbar = () => {
+	const [providers, setProviders] = useState<Record<
+		LiteralUnion<BuiltInProviderType, string>,
+		ClientSafeProvider
+	> | null>(null);
+
+	useEffect(() => {
+		getProviders().then((providers) => setProviders(providers));
+		console.log(providers);
+	}, []);
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -25,9 +42,38 @@ const Navbar = () => {
 				<div className="dropdown dropdown-end">
 					{status === 'unauthenticated' ? (
 						<>
-							<label tabIndex={0} className="btn btn-primary" htmlFor="my-modal-4">
-								SIGN IN
-							</label>
+							<div className="dropdown dropdown-end">
+								<label tabIndex={0} className="btn m-1 btn-primary">
+									SIGN IN
+								</label>
+								<ul
+									tabIndex={0}
+									className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+								>
+									{providers &&
+										Object.values(providers)
+											.filter((provider) => provider.name != 'Credentials')
+											.map((provider) => (
+												<li key={provider.name} className=" justify-center">
+													<button
+														className={`w-auto rounded-md gap-1 content-center px-2 py-3 my-2 justify-start ${
+															provider.id === 'facebook'
+																? 'bg-[#1778F2] text-white'
+																: 'bg-slate-200 text-black'
+														}`}
+														onClick={() => signIn(provider.id, { callbackUrl: router.pathname })}
+													>
+														<img
+															src={`/OAuthProviderIcons/${provider.name}.svg`}
+															alt="Discord"
+															className="h-6 w-6"
+														/>
+														Sign in with {provider.name}
+													</button>
+												</li>
+											))}
+								</ul>
+							</div>
 							{/* <ul
 								tabIndex={0}
 								className="menu menu-compact dropdown-content mt-3 p-2 shadow-lg bg-base-100 rounded-box w-52"
