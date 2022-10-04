@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								tiers: JSON.stringify(tiers),
 								codeId: codeId,
 								refCodeId: refCodeId,
-								userId: userSession.user?.id!
+								userId: userSession.user.id
 							}
 						});
 						if (session.url) {
