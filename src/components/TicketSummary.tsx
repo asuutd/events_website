@@ -33,11 +33,43 @@ const TicketSummary = ({
 			}
 		}
 	});
-	const ticketMutation = trpc.ticket.createTicket.useMutation({
-		onSuccess: (data) => {
-			console.log(data);
+
+	const getStripeCheckout = async () => {
+		const tiers: { tierId: string; quantity: number }[] = [];
+		for (const ticket of tickets) {
+			const newTicket = {
+				tierId: ticket.tier.id,
+				quantity: ticket.quantity
+			};
+			tiers.push(newTicket);
 		}
-	});
+		const response = await fetch('/api/payment/checkout_session', {
+			method: 'POST',
+			body: JSON.stringify({
+				eventId,
+				tiers,
+				...(code !== ''
+					? {
+							codeId: code
+					  }
+					: {}),
+				...(refCode !== ''
+					? {
+							referralCode: refCode
+					  }
+					: {})
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		if (response.ok) {
+			const result = await response.text();
+			window.open(result, '_self');
+		} else {
+			console.log(await response.text());
+		}
+	};
 
 	const [total, setTotal] = useState<number>(0);
 
@@ -52,30 +84,6 @@ const TicketSummary = ({
 		setTotal(val);
 	}, [isOpen]);
 
-	const createTicket = () => {
-		const tiers: { tierId: string; quantity: number }[] = [];
-		for (const ticket of tickets) {
-			const newTicket = {
-				tierId: ticket.tier.id,
-				quantity: ticket.quantity
-			};
-			tiers.push(newTicket);
-		}
-		ticketMutation.mutate({
-			eventId: eventId,
-			tiers: tiers,
-			...(code !== ''
-				? {
-						codeId: code
-				  }
-				: {}),
-			...(refCode !== ''
-				? {
-						referralCode: refCode
-				  }
-				: {})
-		});
-	};
 	return (
 		<Transition.Child
 			as={Fragment}
@@ -155,7 +163,11 @@ const TicketSummary = ({
 					<span className="text-primary text-lg mr-3">Total:</span>${total}
 				</div>
 				<div className="mt-4 ">
-					<button type="button" className="btn btn-primary btn-sm mx-auto" onClick={createTicket}>
+					<button
+						type="button"
+						className="btn btn-primary btn-sm mx-auto"
+						onClick={getStripeCheckout}
+					>
 						PAY
 					</button>
 				</div>
