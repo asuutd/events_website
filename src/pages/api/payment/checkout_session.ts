@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	if (req.method === 'POST') {
 		try {
 			const userSession = await getServerAuthSession({ req, res });
-			if (userSession) {
+			if (userSession?.user?.id) {
 				const { eventId, tiers, codeId, refCodeId } = req.body;
 				console.log(req.headers.origin);
 				console.log(req.body);

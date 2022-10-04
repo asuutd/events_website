@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		switch (event.type) {
 			case 'checkout.session.completed':
 				const checkoutSessionData: any = event.data.object;
-				let metadata = checkoutSessionData.metadata;
+				const metadata = checkoutSessionData.metadata;
 				const tiers = JSON.parse(metadata.tiers);
 				const dataArray: Prisma.TicketCreateManyInput[] = [];
 				let refCodeId: number | null = null;
