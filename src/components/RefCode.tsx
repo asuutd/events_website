@@ -23,7 +23,7 @@ const RefCode = ({ eventId }: { eventId: string }) => {
 						<h2 className="text-6xl my-4 text-center font-bold text-primary">
 							{refCode.data.code}
 						</h2>
-						{!!refCode.data.ref_req && !!refCode.data.ref_completed && (
+						{!!refCode.data.ref_req && (
 							<p className="text-center text-md">
 								<span className="text-secondary">
 									{' '}

@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { request } from 'node:http';
 import { buffer } from 'node:stream/consumers';
 import Stripe from 'stripe';
 import { env } from '../../../env/server.mjs';
@@ -30,59 +31,66 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			res.status(400).send(`Webhook Error: ${err.message}`);
 			return;
 		}
+		try {
+			switch (event.type) {
+				case 'checkout.session.completed':
+					const checkoutSessionData: any = event.data.object;
+					const metadata = checkoutSessionData.metadata;
+					const tiers = JSON.parse(metadata.tiers);
+					const dataArray: Prisma.TicketCreateManyInput[] = [];
+					let refCodeId: number | null = null;
+					let sameOwner = false;
+					const userId = metadata.userId;
 
-		switch (event.type) {
-			case 'checkout.session.completed':
-				const checkoutSessionData: any = event.data.object;
-				const metadata = checkoutSessionData.metadata;
-				const tiers = JSON.parse(metadata.tiers);
-				const dataArray: Prisma.TicketCreateManyInput[] = [];
-				let refCodeId: number | null = null;
-				let sameOwner = false;
-				const userId = metadata.userId;
-
-				//This hurts but its to prevent collisions
-				if (metadata.refCodeId) {
-					const code = await prisma.refCode.findFirst({
-						where: {
-							code: metadata.refCodeId
-						},
-						select: {
-							id: true,
-							userId: true
-						}
-					});
-					if (code) refCodeId = code.id;
-					if (userId === code?.userId) sameOwner = true;
-				}
-				for (const tier of tiers) {
-					for (let i = 0; i < tier.quantity; ++i) {
-						const ticket = {
-							userId: userId,
-							eventId: metadata.eventId,
-							tierId: tier.tierId,
-							...(metadata.codeId //Make sure to change this. Code should be serched before creating ticket
-								? {
-										codeId: metadata.codeId
-								  }
-								: {}),
-							...(refCodeId && !sameOwner
-								? {
-										refCodeId: refCodeId
-								  }
-								: {})
-						};
-						dataArray.push(ticket);
+					//This hurts but its to prevent collisions
+					if (metadata.refCodeId) {
+						const code = await prisma.refCode.findFirst({
+							where: {
+								code: metadata.refCodeId
+							},
+							select: {
+								id: true,
+								userId: true
+							}
+						});
+						if (code) refCodeId = code.id;
+						if (userId === code?.userId) sameOwner = true;
 					}
-				}
-				console.log(dataArray);
-				await prisma.ticket.createMany({
-					data: dataArray
-				});
-				res.status(200);
-				break;
-			default:
-				console.log(`Unhandled event type ${event.type}`);
+					for (const tier of tiers) {
+						for (let i = 0; i < tier.quantity; ++i) {
+							const ticket = {
+								userId: userId,
+								eventId: metadata.eventId,
+								tierId: tier.tierId,
+								...(metadata.codeId //Make sure to change this. Code should be serched before creating ticket
+									? {
+											codeId: metadata.codeId
+									  }
+									: {}),
+								...(refCodeId && !sameOwner
+									? {
+											refCodeId: refCodeId
+									  }
+									: {})
+							};
+							dataArray.push(ticket);
+						}
+					}
+					console.log(dataArray);
+					await prisma.ticket.createMany({
+						data: dataArray
+					});
+					res.status(200);
+					break;
+				default:
+					console.log(`Unhandled event type ${event.type}`);
+			}
+		} catch (err: any) {
+			if (err instanceof Stripe.errors.StripeError) {
+				res.status(err.statusCode || 500).json(err.message);
+			} else {
+				res.status(500);
+			}
 		}
 	} else {
 		res.status(405);

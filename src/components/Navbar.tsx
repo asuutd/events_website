@@ -17,16 +17,21 @@ const Navbar = () => {
 		LiteralUnion<BuiltInProviderType, string>,
 		ClientSafeProvider
 	> | null>(null);
+	//const url = new URL(window.location.href);
 
 	useEffect(() => {
 		getProviders().then((providers) => setProviders(providers));
 		console.log(providers);
 	}, []);
 	const router = useRouter();
+
+	useEffect(() => {
+		console.log(window.location.href);
+	}, [router]);
 	const { data: session, status } = useSession();
 	const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
 		//assertConfiguration().close(); //Close Ably Client on Logout
-		signOut({ redirect: true, callbackUrl: router.pathname });
+		signOut({ redirect: true, callbackUrl: window.location.href });
 	};
 	return (
 		<div className="navbar bg-base-100">
@@ -54,7 +59,9 @@ const Navbar = () => {
 												<li key={provider.name} className=" justify-center">
 													<button
 														className={` shadow-md w-auto rounded-md gap-1  content-between px-2 py-3 my-2 justify-start bg-base-100 text-black`}
-														onClick={() => signIn(provider.id, { callbackUrl: router.pathname })}
+														onClick={() =>
+															signIn(provider.id, { callbackUrl: window.location.href })
+														}
 													>
 														<img
 															src={`/OAuthProviderIcons/${provider.name}.svg`}

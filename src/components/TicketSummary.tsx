@@ -33,9 +33,10 @@ const TicketSummary = ({
 			}
 		}
 	});
-
+	const [stripeLoading, setStripeLoading] = useState(false);
 	const getStripeCheckout = async () => {
 		const tiers: { tierId: string; quantity: number }[] = [];
+
 		for (const ticket of tickets) {
 			const newTicket = {
 				tierId: ticket.tier.id,
@@ -43,6 +44,7 @@ const TicketSummary = ({
 			};
 			tiers.push(newTicket);
 		}
+		setStripeLoading(true);
 		const response = await fetch('/api/payment/checkout_session', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -63,11 +65,14 @@ const TicketSummary = ({
 				'Content-Type': 'application/json'
 			}
 		});
+
 		if (response.ok) {
 			const result = await response.text();
+
 			window.open(result, '_self');
+			setStripeLoading(false);
 		} else {
-			console.log(await response.text());
+			setStripeLoading(false);
 		}
 	};
 
@@ -165,7 +170,9 @@ const TicketSummary = ({
 				<div className="mt-4 ">
 					<button
 						type="button"
-						className="btn btn-primary btn-sm mx-auto"
+						className={`btn btn-primary btn-sm mx-auto ${
+							stripeLoading ? 'btn-disabled animate-pulse' : ''
+						} `}
 						onClick={getStripeCheckout}
 					>
 						PAY
