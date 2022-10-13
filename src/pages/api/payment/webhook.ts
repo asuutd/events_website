@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { StripeError } from '@stripe/stripe-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { request } from 'node:http';
 import { buffer } from 'node:stream/consumers';
@@ -34,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		try {
 			switch (event.type) {
 				case 'checkout.session.completed':
-					const checkoutSessionData: any = event.data.object;
+					const checkoutSessionData = event.data.object as any;
 					const metadata = checkoutSessionData.metadata;
 					const tiers = JSON.parse(metadata.tiers);
 					const dataArray: Prisma.TicketCreateManyInput[] = [];
@@ -83,6 +84,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					});
 					res.status(200).json({ received: true });
 					break;
+				case 'charge.refunded':
+					const refundData = event.data.object as Stripe.Charge;
+					const ticketId = refundData.metadata.ticketId || ':)';
+					await prisma.ticket.update({
+						where: {
+							id: ticketId
+						},
+						data: {
+							tierId: undefined
+						}
+					});
 				default:
 					console.log(`Unhandled event type ${event.type}`);
 			}
