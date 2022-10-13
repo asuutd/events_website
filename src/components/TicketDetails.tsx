@@ -1,21 +1,31 @@
 import { Dialog, Tab, Transition } from '@headlessui/react';
-import { trpc } from '../utils/trpc';
-import React, { Fragment, useEffect, useState } from 'react';
-import type { Tier } from '@prisma/client';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import type { Ticket, Tier, Event } from '@prisma/client';
 import QRCode from 'qrcode';
-import Image from 'next/image';
+import Image from 'next/future/image';
+import { useSession } from 'next-auth/react';
+import VanillaTilt from 'vanilla-tilt';
 
 function classNames(...classes: string[]) {
 	return classes.filter(Boolean).join(' ');
 }
 
-const TicketSummary = ({ ticketId }: { ticketId: string }) => {
-	const [QRCOdeUrl, setQRCodeURl] = useState('');
+type TicketWithEventData = Ticket & {
+	event: Event;
+	tier: Tier;
+};
+
+
+const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
+	const [QRCodeUrl, setQRCodeURL] = useState('');
+	const { data: session } = useSession();
 
 	useEffect(() => {
-		const generateQR = async (text: string) => {
+	if (!ticket) return
+
+				const generateQR = async (text: string) => {
 			try {
-				setQRCodeURl(
+				setQRCodeURL(
 					await QRCode.toDataURL(text, {
 						width: 500,
 						margin: 1,
@@ -29,9 +39,24 @@ const TicketSummary = ({ ticketId }: { ticketId: string }) => {
 				console.error(err);
 			}
 		};
-		generateQR(`https://events.utd-asu.com/${ticketId}/validate`);
+		generateQR(`https://events.utd-asu.com/${ticket.id}/validate`);
 	}, []);
+	const root = useRef(null)
+	useEffect(()=>{
+		if (!root.current) return
+		VanillaTilt.init(root.current, {
+			max: 7.5,
+			scale: 1.05,
+			speed: 700,
+			glare: true,
+			"max-glare": 0.35,
+			gyroscope: true,
+		  })
+	}, [root])
+	if (!ticket) return <></>
 	return (
+		<>
+
 		<Transition.Child
 			as={Fragment}
 			enter="ease-out duration-300"
@@ -41,17 +66,34 @@ const TicketSummary = ({ ticketId }: { ticketId: string }) => {
 			leaveFrom="opacity-100 scale-100"
 			leaveTo="opacity-0 scale-95"
 		>
-			<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-				<Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-					Ticket Details
-				</Dialog.Title>
+
+				<Dialog.Panel ref={root} className="w-[320px] transform overflow-hidden rounded-2xl text-left align-middle shadow-xl transition-all ">
+				
+<TicketCap rotated={false}/>
+				<div className="pt-6 bg-white">
+				<div className="flex flex-col place-items-center">
+					<Image
+						src={session?.user?.image || "/pic_4.png"}
+						alt=''
+						className="w-10 rounded-full"
+						width="50"
+						height="50"
+					/>
+
+						<h2 className='text-lg font-bold'>{session?.user?.name}</h2>
+						<p className='text-xs'>{session?.user?.email}</p>
+
+				<p className='text-4xl font-bold mt-4 mb-2'>{ticket.event.name}</p>
+				<p className='text-gray-500 text-xs mb-2'>{ticket.event.start.toLocaleDateString()}</p>
+									
+
 				<Tab.Group>
 					<Tab.List className="flex space-x-1 rounded-xl bg-primary/20 p-1">
 						<Tab
 							key={'QRCode'}
 							className={({ selected }) =>
 								classNames(
-									'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-primary',
+									'w-max rounded-lg p-2.5 text-sm font-medium leading-5 text-primary',
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-base-200 focus:outline-none focus:ring-2',
 									selected
 										? 'bg-white shadow'
@@ -59,13 +101,13 @@ const TicketSummary = ({ ticketId }: { ticketId: string }) => {
 								)
 							}
 						>
-							QRCode
+							QR Code
 						</Tab>
 						<Tab
 							key={'BarCode'}
 							className={({ selected }) =>
 								classNames(
-									'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-primary',
+									'w-max rounded-lg p-2.5 text-sm font-medium leading-5 text-primary',
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-base-200 focus:outline-none focus:ring-2',
 									selected
 										? 'bg-white shadow'
@@ -73,7 +115,7 @@ const TicketSummary = ({ ticketId }: { ticketId: string }) => {
 								)
 							}
 						>
-							BarCode
+							Barcode
 						</Tab>
 					</Tab.List>
 					<Tab.Panels className="mt-2">
@@ -83,50 +125,48 @@ const TicketSummary = ({ ticketId }: { ticketId: string }) => {
 								'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 							)}
 						>
-							<div className="mx-auto flex justify-center">
-								<Image
-									src={QRCOdeUrl}
+
+								{QRCodeUrl && <Image
+									src={QRCodeUrl}
 									width={200}
 									height={200}
-									className="mx-auto rounded-lg"
-								></Image>
-							</div>
+									className="mx-auto rounded-lg w-10/12"
+									alt=""
+								></Image>}
+
 						</Tab.Panel>
 					</Tab.Panels>
 				</Tab.Group>
+<div className="mt-6 border-t-2 border-b-gray-400 border-dashed p-6 font-mono flex flex-col gap-4 align-middle">
+				<p className='text-[0.5rem]'>This digital ticket #{ticket.id} grants 1 entry to <span className='italic'>{ticket.event.name}</span>, presented by UTD ASU.</p>
+				<ul className='text-xs font-mono flex  border border-primary divide-x divide-primary text-primary w-max'>
+					<li className='py-1 px-2'>${ticket.tier.price || "0"}</li>
+					<li className='py-1 px-2'>{ticket.tier.name || 'Free Ticket'}</li>
+					<li className='py-1 px-2'>{ticket.event.start.toLocaleTimeString()}</li>
+				</ul>
+				</div>
+				</div>
 
-				{/* <div>
-									<svg
-										version="1.1"
-										id="L9"
-										xmlns="http://www.w3.org/2000/svg"
-										xmlnsXlink="http://www.w3.org/1999/xlink"
-										x="0px"
-										y="0px"
-										viewBox="0 0 100 100"
-										enable-background="new 0 0 0 0"
-										xmlSpace="preserve"
-									>
-										<path
-											fill="#000"
-											d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
-										>
-											<animateTransform
-												attributeName="transform"
-												attributeType="XML"
-												type="rotate"
-												dur="1s"
-												from="0 50 50"
-												to="360 50 50"
-												repeatCount="indefinite"
-											/>
-										</path>
-									</svg>
-								</div>
- */}
+</div>
+<TicketCap rotated={true}/>
+
 			</Dialog.Panel>
+
 		</Transition.Child>
+		</>
 	);
 };
+
+function TicketCap(props: {rotated: boolean}) {
+	const {rotated}=props;
+	return (
+
+		<svg className={classNames("w-full", rotated ? "rotate-180" : "")} height="50" viewBox="0 0 320 50" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M-2.18557e-06 0L0 50L160 50L320 50L320 -1.39876e-05L210 -9.17939e-06C210 27.6142 187.614 50 160 50C132.386 50 110 27.6142 110 -4.80825e-06L-2.18557e-06 0Z" fill="white"/>
+</svg>
+
+
+	)
+}
 
 export default TicketSummary;

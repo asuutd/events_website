@@ -117,20 +117,10 @@ const Event: NextPage = () => {
 		<>
 			<Head>
 				<title>ASU Fall Ball 2022</title>
-				<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 			</Head>
 			<main className="mx-6   py-2 ">
 				<div className="flex justify-center lg:justify-between mx-auto">
 					<div className="">
-						{/* 			<div className="mx-auto justify-center">
-<Image
-    src="https://ucarecdn.com/507bbe81-26dd-4cec-ad8c-978419c619eb/-/preview/-/quality/smart/-/format/auto/"
-    alt="dd"
-    width={400}
-    height={400}
-    className="object-none w-full mx-auto"
-/>
-</div> */}
 						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Event</h2>
 						<h3 className="uppercase text-5xl font-semibold mx-2 my-6">Fall Ball 2022</h3>
 						<div className="mx-2 my-6  ">

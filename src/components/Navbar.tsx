@@ -48,8 +48,8 @@ const Navbar = () => {
 					{status === 'unauthenticated' ? (
 						<>
 							<div className="dropdown dropdown-end">
-								<label tabIndex={0} className="btn m-1 btn-primary">
-									SIGN IN
+								<label tabIndex={0} className="btn m-1 btn-primary uppercase">
+									Sign In
 								</label>
 								<ul tabIndex={0} className="dropdown-content menu  rounded-box w-52">
 									{providers &&
