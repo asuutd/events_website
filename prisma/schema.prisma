@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
@@ -25,12 +26,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?  @db.Text
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -66,30 +67,31 @@ model VerificationToken {
 }
 
 model Event {
-  id      String    @id @default(cuid())
-  start   DateTime
-  end     DateTime
-  name    String
-  image   String?
+  id           String    @id @default(cuid())
+  start        DateTime
+  end          DateTime
+  name         String
+  image        String?
   ref_quantity Int?
-  tickets Ticket[]
-  RefCode RefCode[]
-  Tier    Tier[]
+  tickets      Ticket[]
+  RefCode      RefCode[]
+  Tier         Tier[]
 }
 
 model Ticket {
-  id          String    @id @default(cuid())
-  codeId      String?
-  tierId      String?
-  eventId     String
-  userId      String
-  refCodeId   Int?
-  checkedInAt DateTime?
-  createdAt   DateTime  @default(now())
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event       Event     @relation(fields: [eventId], references: [id], onDelete: NoAction)
-  tier        Tier?      @relation(fields: [tierId], references: [id], onDelete: NoAction)
-  refCode     RefCode?  @relation(fields: [refCodeId], references: [id], onDelete: NoAction)
+  id            String    @id @default(cuid())
+  codeId        String?
+  tierId        String?
+  eventId       String
+  userId        String
+  refCodeId     Int?
+  checkedInAt   DateTime?
+  createdAt     DateTime  @default(now())
+  paymentIntent String?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event         Event     @relation(fields: [eventId], references: [id], onDelete: NoAction)
+  tier          Tier?     @relation(fields: [tierId], references: [id], onDelete: NoAction)
+  refCode       RefCode?  @relation(fields: [refCodeId], references: [id], onDelete: NoAction)
 }
 
 model Code {
@@ -107,7 +109,7 @@ model Tier {
   start   DateTime
   end     DateTime
   eventId String
-  name String
+  name    String
   code    Code[]
   event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   Ticket  Ticket[]

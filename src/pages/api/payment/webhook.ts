@@ -62,6 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								userId: userId,
 								eventId: metadata.eventId,
 								tierId: tier.tierId,
+								paymentIntent: checkoutSessionData.payment_intent,
 								...(metadata.codeId //Make sure to change this. Code should be serched before creating ticket
 									? {
 											codeId: metadata.codeId
@@ -80,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					await prisma.ticket.createMany({
 						data: dataArray
 					});
-					res.status(200);
+					res.status(200).json({ received: true });
 					break;
 				default:
 					console.log(`Unhandled event type ${event.type}`);

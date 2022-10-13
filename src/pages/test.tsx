@@ -6,15 +6,19 @@ import Modal from '../components/Modal';
 import { trpc } from '../utils/trpc';
 
 const Test: NextPage = () => {
-	const refCodes = trpc.code.getMyRefCodes.useQuery(
-		{},
-		{
-			onSuccess(data) {
-				console.log(data);
+	const refCodes = trpc.ticket.refundTicket.useMutation();
+	return (
+		<button
+			className="btn"
+			onClick={() =>
+				refCodes.mutate({
+					eventId: 'cl8r36itw0000uh8sjkoy3uo7'
+				})
 			}
-		}
+		>
+			MUTAT
+		</button>
 	);
-	return <></>;
 };
 
 export default Test;

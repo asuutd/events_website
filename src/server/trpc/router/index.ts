@@ -5,13 +5,15 @@ import { authRouter } from './auth';
 import { ticketRouter } from './ticket';
 import { codeRouter } from './code';
 import { tierRouter } from './tier';
+import { eventRouter } from './event';
 
 export const appRouter = t.router({
 	example: exampleRouter,
 	auth: authRouter,
 	ticket: ticketRouter,
 	code: codeRouter,
-	tier: tierRouter
+	tier: tierRouter,
+	event: eventRouter
 });
 
 // export type definition of API
