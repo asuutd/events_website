@@ -38,6 +38,7 @@ const Ticket: NextPage = () => {
 
 			setPast(small);
 			setUpcoming(large);
+
 		},
 		onError: (err) => {
 			switch (err?.data?.code) {
