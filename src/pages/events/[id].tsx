@@ -1,13 +1,9 @@
-import { Dialog, Transition } from '@headlessui/react';
 import type { Tier } from '@prisma/client';
-import { AnimatePresence } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next/types';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from '../../components/Modal';
 import RefCode from '../../components/RefCode';
 import TicketSummary from '../../components/TicketSummary';
@@ -60,7 +56,7 @@ const Event: NextPage = () => {
 
 	const eventId: string = typeof id === 'string' ? id : id == undefined ? ':)' : id[0]!;
 
-	const tiers = trpc.tier.getTiers.useQuery(
+	const event = trpc.event.getEvent.useQuery(
 		{ eventId: eventId },
 		{
 			refetchInterval: false
@@ -146,8 +142,8 @@ const Event: NextPage = () => {
 						</div>
 
 						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Tickets</h2>
-						{tiers.data &&
-							tiers.data.map((tier) => (
+						{event.data &&
+							event.data.Tier.map((tier) => (
 								<div
 									key={tier.id}
 									className="flex flex-col lg:flex-row justify-between mx-2 gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"
@@ -184,10 +180,11 @@ const Event: NextPage = () => {
 								>
 									CHECKOUT
 								</button>
-
-								<button className="text-xs underline" onClick={openRefModal}>
-									Want a referral code?
-								</button>
+								{event.data?.ref_quantity && (
+									<button className="text-xs underline" onClick={openRefModal}>
+										Want a referral code?
+									</button>
+								)}
 							</div>
 						) : status === 'loading' ? (
 							<button

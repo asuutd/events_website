@@ -1,20 +1,20 @@
 import { authedProcedure, t } from '../trpc';
 import { z } from 'zod';
 
-export const tierRouter = t.router({
-	getTiers: t.procedure
+export const eventRouter = t.router({
+	getEvent: t.procedure
 		.input(
 			z.object({
 				eventId: z.string()
 			})
 		)
 		.query(async ({ input, ctx }) => {
-			const tier = await ctx.prisma.tier.findMany({
+			const tier = await ctx.prisma.event.findFirst({
 				where: {
-					eventId: input.eventId
+					id: input.eventId
 				},
 				include: {
-					event: true
+					Tier: true
 				}
 			});
 

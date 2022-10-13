@@ -31,7 +31,7 @@ const RefCode = ({ eventId }: { eventId: string }) => {
 										? refCode.data.ref_req - refCode.data.ref_completed
 										: 0}{' '}
 								</span>
-								people till a free ticket
+								people till a free ticket / refund
 							</p>
 						)}
 					</div>
