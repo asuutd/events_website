@@ -36,7 +36,7 @@ const RefCode = ({
 
 	const rewardType = trpc.ticket.getTicOrRef.useQuery(
 		{
-			eventId: event?.id!
+			eventId: event?.id || ':)'
 		},
 		{
 			refetchInterval: undefined,
