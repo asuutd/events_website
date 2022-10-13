@@ -217,10 +217,13 @@ export const ticketRouter = t.router({
 				lowestTierTicket.tier
 			) {
 				console.log('214');
-				/* await stripe.refunds.create({
+				await stripe.refunds.create({
 					payment_intent: lowestTierTicket.paymentIntent,
-					amount: lowestTierTicket.tier.price  * 100
-				}) */
+					amount: lowestTierTicket.tier.price * 100,
+					metadata: {
+						ticketId: lowestTierTicket.id
+					}
+				});
 			}
 		}),
 
@@ -234,5 +237,59 @@ export const ticketRouter = t.router({
 				tier: true
 			}
 		});
-	})
+	}),
+
+	getTicOrRef: authedProcedure
+		.input(
+			z.object({
+				eventId: z.string()
+			})
+		)
+		.query(async ({ input, ctx }) => {
+			const userId = ctx.session.user.id;
+			const refCode = await ctx.prisma.refCode.findFirst({
+				where: {
+					userId: userId,
+					eventId: input.eventId
+				},
+				include: {
+					_count: {
+						select: { tickets: true }
+					},
+					event: true
+				}
+			});
+			if (
+				refCode &&
+				refCode.event.ref_quantity &&
+				refCode._count.tickets >= refCode.event.ref_quantity
+			) {
+				const tickets = await ctx.prisma.ticket.findMany({
+					where: {
+						userId: userId,
+						eventId: input.eventId
+					}
+				});
+
+				const freeTicket = tickets.find((ticket) => ticket.tierId === null);
+
+				if (freeTicket) {
+					return {
+						type: 'none'
+					};
+				}
+				if (tickets.length > 0) {
+					return {
+						type: 'refund'
+					};
+				}
+
+				return {
+					type: 'free'
+				};
+			}
+			return {
+				type: ':)'
+			};
+		})
 });

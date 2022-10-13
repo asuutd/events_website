@@ -67,9 +67,6 @@ const Event: NextPage = () => {
 		console.log(id);
 	}, [router]);
 
-	useEffect(() => {
-		console.log(tickets);
-	}, [tickets]);
 	const setTicketQuantity = (val: number, dir: UpOrDown, tier: Tier) => {
 		const newTickets = [...tickets];
 		const newTicket = newTickets.find((ticket) => ticket.tier.id === tier.id);
@@ -208,7 +205,7 @@ const Event: NextPage = () => {
 						</Modal>
 
 						<Modal isOpen={isRefOpen} closeModal={closeRefModal}>
-							<RefCode eventId={eventId} />
+							<RefCode event={event.data} />
 						</Modal>
 					</div>
 
