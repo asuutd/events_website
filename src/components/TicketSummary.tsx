@@ -57,7 +57,7 @@ const TicketSummary = ({
 					: {}),
 				...(refCode !== ''
 					? {
-							referralCode: refCode
+							refCodeId: refCode
 					  }
 					: {})
 			}),
