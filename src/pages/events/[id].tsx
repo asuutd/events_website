@@ -106,6 +106,7 @@ const Event: NextPage = () => {
 		}
 		setCheckout(val);
 	};
+
 	return (
 		<>
 			<Head>
