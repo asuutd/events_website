@@ -109,12 +109,15 @@ export const ticketRouter = t.router({
 
 			const freeTicket = tickets.find((ticket) => ticket.tierId === null);
 
-			const lowestTierTicket = tickets.reduce((prev, curr) => {
-				return (prev.tier?.price || Number.MAX_SAFE_INTEGER) <
-					(prev.tier?.price || Number.MAX_SAFE_INTEGER)
-					? prev
-					: curr;
-			});
+			const lowestTierTicket =
+				tickets.length === 0
+					? null
+					: tickets.reduce((prev, curr) => {
+							return (prev.tier?.price || Number.MAX_SAFE_INTEGER) <
+								(prev.tier?.price || Number.MAX_SAFE_INTEGER)
+								? prev
+								: curr;
+					  });
 
 			if (freeTicket) {
 				throw new TRPCError({
@@ -133,7 +136,7 @@ export const ticketRouter = t.router({
 			if (refCode) {
 				//Check if the referal code has reached threshold
 				if (refCode._count.tickets >= (refCode.event.ref_quantity || Number.MAX_SAFE_INTEGER)) {
-					const ticket = await ctx.prisma.ticket.create({
+					await ctx.prisma.ticket.create({
 						data: {
 							userId: userId,
 							eventId: input.eventId
@@ -193,6 +196,10 @@ export const ticketRouter = t.router({
 			}
 
 			const freeTicket = event.tickets.find((ticket) => ticket.tierId === null);
+
+			if (event.tickets.length === 0) {
+				return;
+			}
 
 			const lowestTierTicket = event.tickets.reduce((prev, curr) => {
 				return (prev.tier?.price || Number.MAX_SAFE_INTEGER) <

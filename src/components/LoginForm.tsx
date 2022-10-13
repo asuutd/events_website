@@ -101,7 +101,7 @@ const LoginForm = ({
 					.map((provider) => (
 						<div key={provider.name} className="flex justify-center">
 							<button
-								className={`w-72 rounded-md flex gap-10 content-center px-2 py-3 my-2 justify-start ${
+								className={` rounded-md flex gap-1 content-center px-2 py-3 my-2 justify-start ${
 									provider.id === 'facebook' ? 'bg-[#1778F2] text-white' : 'bg-slate-200 text-black'
 								}`}
 								onClick={() => signIn(provider.id, { callbackUrl: router.pathname })}

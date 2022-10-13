@@ -23,18 +23,24 @@ const RefCode = ({
 		onSuccess: () => {
 			router.push('/tickets');
 		},
+
 		onError: (error) => {
 			if (error.message === 'Charge ch_3LsNzbJtrYCcdARG1VieC2Y4 has already been refunded.') {
 				setError('Refund already processed');
 			}
 		}
 	});
-	const getTicket = trpc.ticket.createFreeTicket.useMutation();
+	const getTicket = trpc.ticket.createFreeTicket.useMutation({
+		onSuccess: (data) => {
+			router.push('/tickets');
+		}
+	});
+
 	const [buttonText, setButtonText] = useState('GENERATE');
 	const [btnDisabled, setBtnDisabled] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const rewardType = trpc.ticket.getTicOrRef.useQuery(
+	trpc.ticket.getTicOrRef.useQuery(
 		{
 			eventId: event?.id || ':)'
 		},
@@ -48,6 +54,7 @@ const RefCode = ({
 				}
 
 				if (data.type === 'none') {
+					setButtonText('CLAIM/REFUND');
 					setBtnDisabled(true);
 				}
 			}
@@ -136,7 +143,13 @@ const RefCode = ({
 						)}
 						<div className="mt-2 mx-auto">
 							<button
-								className={`btn btn-md mx-auto flex ${btnDisabled && 'btn-disabled'}`}
+								className={`btn btn-md mx-auto flex ${
+									(btnDisabled ||
+										refCode.isLoading ||
+										getRefund.isLoading ||
+										getTicket.isLoading) &&
+									'btn-disabled'
+								}`}
 								onClick={(e) => processButton(e)}
 							>
 								{buttonText}
