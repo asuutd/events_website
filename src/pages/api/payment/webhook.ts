@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				case 'charge.refunded':
 					const chargeData = event.data.object as Stripe.Charge;
 					if (chargeData.refunds?.data) {
-						let ticketIds: string[] = [];
+						const ticketIds: string[] = [];
 						chargeData.refunds.data.forEach(
 							(refund) =>
 								refund.metadata?.ticketId !== undefined && ticketIds.push(refund.metadata.ticketId)
