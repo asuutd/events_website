@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const sigString: string = typeof sig === 'string' ? sig : sig == undefined ? ':)' : sig[0]!;
 
 		let event: Stripe.Event;
-		console.log(req.body);
+
 		try {
 			event = stripe.webhooks.constructEvent(buf.toString(), sigString, env.WEBHOOK_SECRET);
 		} catch (err: any) {
@@ -88,10 +88,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					const chargeData = event.data.object as Stripe.Charge;
 					if (chargeData.refunds?.data) {
 						const ticketIds: string[] = [];
-						chargeData.refunds.data.forEach(
-							(refund) =>
-								refund.metadata?.ticketId !== undefined && ticketIds.push(refund.metadata.ticketId)
-						);
+						chargeData.refunds.data.forEach((refund) => {
+							if (refund.metadata?.ticketId !== undefined) {
+								ticketIds.push(refund.metadata.ticketId);
+							}
+						});
+
 						if (ticketIds.length > 1) {
 							throw new Error('HAHA');
 						}
