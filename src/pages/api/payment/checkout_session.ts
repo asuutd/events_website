@@ -20,24 +20,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				if (!eventId && !tiers) {
 					res.status(400);
 				} else {
-					const event = await prisma.event.findFirst({
-						where: {
-							id: eventId,
-							Tier: {
-								some: {
-									OR: tiers.map((tier: any) => ({
-										id: tier.tierId
-									}))
+					const [event, code] = await Promise.all([
+						prisma.event.findFirst({
+							where: {
+								id: eventId,
+								Tier: {
+									some: {
+										OR: tiers.map((tier: any) => ({
+											id: tier.tierId
+										}))
+									}
+								}
+							},
+							include: {
+								Tier: true
+							}
+						}),
+						prisma.code.findFirst({
+							where: {
+								id: refCodeId
+							},
+							include: {
+								_count: {
+									select: { tickets: true }
 								}
 							}
-						},
-						include: {
-							Tier: true
-						}
-					});
+						})
+					]);
 					console.log(event);
 					if (event?.Tier) {
 						const line_items: any = [];
+						let remaining = 0;
+						if (code) {
+							remaining = code.limit - code._count.tickets;
+							console.log(code._count.tickets);
+						}
 						event.Tier.forEach((tier) => {
 							const line_item = {
 								// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
@@ -47,11 +64,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 										name: tier.name || 'Free Ticket',
 										images: [event.image]
 									},
-									unit_amount: tier.price * 100
+									unit_amount:
+										(remaining > 0 && code && tier.id === code.tierId
+											? (1 - code.value) * tier.price
+											: tier.price) * 100
 								},
 								quantity: tiers.find((tier2: any) => tier2.tierId === tier.id)?.quantity || 1
 							};
 							line_items.push(line_item);
+							if (code && tier.id === code.tierId) {
+								remaining -= 1;
+							}
 						});
 						console.log(line_items);
 

@@ -41,12 +41,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					const tiers = JSON.parse(metadata.tiers);
 					const dataArray: Prisma.TicketCreateManyInput[] = [];
 					let refCodeId: number | null = null;
+
 					let sameOwner = false;
 					const userId = metadata.userId;
 
-					//This hurts but its to prevent collisions
-					if (metadata.refCodeId) {
-						const code = await prisma.refCode.findFirst({
+					const [refCode, code] = await Promise.all([
+						prisma.refCode.findFirst({
 							where: {
 								code: metadata.refCodeId
 							},
@@ -54,10 +54,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								id: true,
 								userId: true
 							}
-						});
-						if (code) refCodeId = code.id;
-						if (userId === code?.userId) sameOwner = true;
-					}
+						}),
+						prisma.code.findFirst({
+							where: {
+								code: metadata.codeId
+							}
+						})
+					]);
+					if (refCode) refCodeId = refCode.id;
+					if (userId === refCode?.userId) sameOwner = true;
+
 					for (const tier of tiers) {
 						for (let i = 0; i < tier.quantity; ++i) {
 							const ticket = {
@@ -65,9 +71,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								eventId: metadata.eventId,
 								tierId: tier.tierId,
 								paymentIntent: checkoutSessionData.payment_intent,
-								...(metadata.codeId //Make sure to change this. Code should be serched before creating ticket
+								...(code //Make sure to change this. Code should be serched before creating ticket
 									? {
-											codeId: metadata.codeId
+											codeId: code.id
 									  }
 									: {}),
 								...(refCodeId && !sameOwner
