@@ -25,9 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const sigString: string = typeof sig === 'string' ? sig : sig == undefined ? ':)' : sig[0]!;
 
 		let event: Stripe.Event;
+		console.log(env.WEBHOOK_SECRET, sigString);
 
 		try {
-			event = stripe.webhooks.constructEvent(buf.toString(), sigString, env.WEBHOOK_SECRET);
+			event = stripe.webhooks.constructEvent(buf, sigString, env.WEBHOOK_SECRET);
 		} catch (err: any) {
 			res.status(400).send(`Webhook Error: ${err.message}`);
 			return;
@@ -86,6 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					break;
 				case 'charge.refunded':
 					const chargeData = event.data.object as Stripe.Charge;
+					console.log(chargeData.refunds?.data);
 					if (chargeData.refunds?.data) {
 						const ticketIds: string[] = [];
 						chargeData.refunds.data.forEach((refund) => {
@@ -108,9 +110,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								tierId: undefined
 							}
 						});
+						res.status(200).json({ received: true, message: ticketIds });
+					} else {
+						res.status(200).json({ received: true });
 					}
 
-					res.status(200).json({ received: true });
+					break;
 				default:
 					console.log(`Unhandled event type ${event.type}`);
 			}
