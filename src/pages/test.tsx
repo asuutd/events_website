@@ -7,7 +7,7 @@ import Modal from '../components/Modal';
 import { trpc } from '../utils/trpc';
 
 const Test: NextPage = () => {
-	return <h1> PELUMI's SAFE SPACE</h1>;
+	return <h1> PELUMI&apos;s SAFE SPACE</h1>;
 };
 
 export default Test;
