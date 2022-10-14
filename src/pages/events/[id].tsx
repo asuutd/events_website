@@ -117,16 +117,16 @@ const Event: NextPage = () => {
 			<main className="mx-6   py-2 ">
 				<div className="flex justify-center lg:justify-between mx-auto">
 					<div className="">
-						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Event</h2>
+						<h2 className="text-4xl text-primary font-bold  my-6">Event</h2>
 						{event.isFetched ? (
-							<h3 className="uppercase text-4xl sm:text-5xl font-semibold mx-2 my-6">
+							<h3 className="uppercase text-4xl sm:text-5xl font-semibold  my-6">
 								{event.data?.name}
 							</h3>
 						) : (
-							<h3 className="h-12 w-96 bg-base-200 animate-pulse rounded-md"></h3>
+							<h3 className="h-12 w-72 bg-base-200 animate-pulse rounded-md my-6"></h3>
 						)}
 
-						<div className="mx-2 my-6  ">
+						<div className="my-6  ">
 							<div className="flex mb-2 gap-3">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -142,18 +142,25 @@ const Event: NextPage = () => {
 							<div className="mt-2 flex gap-3 items-center">
 								<img src="/clock.svg" alt="" className="w-5 h-5 " />
 								<div className="flex flex-col">
-									<div>Sat 5 Nov 2022</div>
-									<div>6:00PM to 8:00PM</div>
+									<div>{event.data?.start.toLocaleDateString()}</div>
+									<div>
+										{event.data?.start.toLocaleTimeString([], {
+											hour: '2-digit',
+											minute: '2-digit'
+										})}{' '}
+										to{' '}
+										{event.data?.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+									</div>
 								</div>
 							</div>
 						</div>
 
-						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Tickets</h2>
+						<h2 className="text-4xl text-primary font-bold  my-6">Tickets</h2>
 						{event.data ? (
 							event.data.Tier.map((tier) => (
 								<div
 									key={tier.id}
-									className="flex flex-col lg:flex-row justify-between mx-2 gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"
+									className="flex flex-col lg:flex-row justify-between w-auto gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"
 								>
 									<div className="font-semibold">{tier.name}</div>
 
@@ -178,12 +185,12 @@ const Event: NextPage = () => {
 								</div>
 							))
 						) : (
-							<div className="flex flex-col lg:flex-row justify-between mx-2 gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"></div>
+							<div className="flex flex-col lg:flex-row justify-between w-72 h-40 lg:h-auto animate-pulse gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"></div>
 						)}
 						{status === 'authenticated' ? (
 							<div className="flex justify-between items-end">
 								<button
-									className={`flexmx-2 btn btn-primary justify-self-center btn-lg ${
+									className={`flex btn btn-primary justify-self-center btn-lg ${
 										!checkout && 'btn-disabled'
 									}`}
 									onClick={openModal}
