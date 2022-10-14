@@ -66,7 +66,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 			>
 				<Dialog.Panel
 					ref={root}
-					className="w-[320px] transform overflow-hidden rounded-2xl text-left align-middle shadow-xl transition-all "
+					className="w-[320px] transform overflow-hidden rounded-2xl text-left align-middle shadow-xl transition-all"
 				>
 					<TicketCap rotated={false} />
 					<div className="pt-6 bg-white">
@@ -169,8 +169,8 @@ function TicketCap(props: { rotated: boolean }) {
 			preserveAspectRatio="none"
 		>
 			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
+				fillRule="evenodd"
+				clipRule="evenodd"
 				d="M-2.18557e-06 0L0 50L160 50L320 50L320 -1.39876e-05L210 -9.17939e-06C210 27.6142 187.614 50 160 50C132.386 50 110 27.6142 110 -4.80825e-06L-2.18557e-06 0Z"
 				fill="white"
 			/>
