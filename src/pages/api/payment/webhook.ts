@@ -99,7 +99,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						});
 						res.status(200).json({ received: true, message: 'THANK GOD' });
 					} else {
-						res.status(200).json({ received: true, message: 'PLEASE GOD' });
+						res
+							.status(200)
+							.json({
+								received: true,
+								message: 'PLEASE GOD',
+								data: chargeData.refunds?.data.map((data) => data.metadata)
+							});
 					}
 
 					break;
