@@ -9,9 +9,19 @@ const ValidatePage: NextPage = () => {
 	const { id } = router.query;
 	const ticketId = typeof id === 'string' ? id : id == undefined ? ':)' : id[0]!;
 	const [errorText, setErrorText] = useState<string | null>(null);
+	const [admin, setAdmin] = useState<
+		| {
+				eventId: string;
+		  }
+		| undefined
+	>();
 
-	const validate = trpc.ticket.validateTicket.useMutation({});
-	const admin = trpc.auth.getAdmin.useQuery(
+	const validate = trpc.ticket.validateTicket.useMutation({
+		onError: (err) => {
+			setErrorText(err.message);
+		}
+	});
+	const adminQuery = trpc.auth.getAdmin.useQuery(
 		{
 			ticketId: ticketId
 		},
@@ -26,22 +36,27 @@ const ValidatePage: NextPage = () => {
 
 	const validateTicket = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
-		admin.isSuccess &&
+
+		admin &&
 			validate.mutate({
-				eventId: admin.data.eventId,
+				eventId: admin.eventId,
 				ticketId: ticketId
 			});
 	};
 
 	useEffect(() => {
-		if (router.isReady) {
-			admin.refetch();
+		async function anyNameFunction() {
+			const { data, isSuccess } = await adminQuery.refetch();
+			if (isSuccess) {
+				setAdmin(data);
+			}
 		}
 
-		console.log(router.isReady);
+		// Execute the created function directly
+		anyNameFunction();
 	}, [router.isReady]);
 	return (
-		<div className="flex flex-col justify-center min-h-[66vh] gap-3">
+		<div className="flex flex-col justify-center min-h-[66vh] gap-3 max-w-md mx-auto">
 			<button
 				className={`btn btn-primary ${errorText && 'btn-disabled'}`}
 				onClick={(e) => {
