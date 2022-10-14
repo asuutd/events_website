@@ -17,7 +17,10 @@ export const codeRouter = t.router({
 					code: input.code
 				},
 				include: {
-					tier: true
+					tier: true,
+					_count: {
+						select: { tickets: true }
+					}
 				}
 			});
 
