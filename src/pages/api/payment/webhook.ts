@@ -96,7 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								id: ticketIds[0]
 							},
 							data: {
-								tierId: undefined
+								tierId: null
 							}
 						});
 						res.status(200).json({ received: true, result: result, tickets: ticketIds[0] });
