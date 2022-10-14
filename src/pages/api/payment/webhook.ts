@@ -87,32 +87,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					break;
 				case 'charge.refunded':
 					const chargeData = event.data.object as Stripe.Charge;
-					console.log(chargeData.refunds?.data);
-					if (chargeData.refunds?.data) {
-						const ticketIds: string[] = [];
-						chargeData.refunds.data.forEach((refund) => {
-							if (refund.metadata?.ticketId !== undefined) {
-								ticketIds.push(refund.metadata.ticketId);
-							}
-						});
-
-						if (ticketIds.length > 1) {
-							throw new Error('HAHA');
-						}
-
-						await prisma.ticket.updateMany({
+					console.log(chargeData.metadata.ticketId);
+					if (chargeData.metadata.ticketId) {
+						await prisma.ticket.update({
 							where: {
-								id: {
-									in: ticketIds
-								}
+								id: chargeData.metadata.ticketId
 							},
 							data: {
 								tierId: undefined
 							}
 						});
-						res.status(200).json({ received: true, message: ticketIds });
+						res.status(200).json({ received: true, message: 'THANK GOD' });
 					} else {
-						res.status(200).json({ received: true });
+						res.status(200).json({ received: true, message: 'PLEASE GOD' });
 					}
 
 					break;
