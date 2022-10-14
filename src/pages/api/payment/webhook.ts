@@ -25,9 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const sigString: string = typeof sig === 'string' ? sig : sig == undefined ? ':)' : sig[0]!;
 
 		let event: Stripe.Event;
-		console.log(req.body);
+		console.log(env.WEBHOOK_SECRET, sigString);
+
 		try {
-			event = stripe.webhooks.constructEvent(buf.toString(), sigString, env.WEBHOOK_SECRET);
+			event = stripe.webhooks.constructEvent(buf, sigString, env.WEBHOOK_SECRET);
 		} catch (err: any) {
 			res.status(400).send(`Webhook Error: ${err.message}`);
 			return;
@@ -86,29 +87,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					break;
 				case 'charge.refunded':
 					const chargeData = event.data.object as Stripe.Charge;
-					if (chargeData.refunds?.data) {
-						const ticketIds: string[] = [];
-						chargeData.refunds.data.forEach(
-							(refund) =>
-								refund.metadata?.ticketId !== undefined && ticketIds.push(refund.metadata.ticketId)
-						);
-						if (ticketIds.length > 1) {
-							throw new Error('HAHA');
-						}
-
-						await prisma.ticket.updateMany({
+					console.log(chargeData.metadata.ticketId);
+					if (chargeData.metadata.ticketId) {
+						await prisma.ticket.update({
 							where: {
-								id: {
-									in: ticketIds
-								}
+								id: chargeData.metadata.ticketId
 							},
 							data: {
 								tierId: undefined
 							}
 						});
+						res.status(200).json({ received: true, message: 'THANK GOD' });
+					} else {
+						res.status(200).json({ received: true, message: 'PLEASE GOD' });
 					}
 
-					res.status(200).json({ received: true });
+					break;
 				default:
 					console.log(`Unhandled event type ${event.type}`);
 			}
