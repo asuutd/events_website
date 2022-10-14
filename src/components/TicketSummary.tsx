@@ -2,6 +2,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { trpc } from '../utils/trpc';
 import React, { Fragment, useEffect, useState } from 'react';
 import type { Tier } from '@prisma/client';
+import Image from 'next/image';
 
 type Ticket = {
 	tier: Tier;
@@ -12,22 +13,32 @@ type Ticket = {
 const TicketSummary = ({
 	tickets,
 	eventId,
-	isOpen
+	isOpen,
+	refCodeQuery
 }: {
 	tickets: Ticket[];
 	eventId: string;
 	isOpen: boolean;
+	refCodeQuery: string | undefined;
 }) => {
 	const codeQuery = trpc.code.getCode.useMutation({
 		onSuccess: (data) => {
 			if (data) {
 				const ticket = tickets.find((ticket) => ticket.tier.id === data?.tierId);
+				console.log(ticket);
 				if (ticket !== undefined) {
 					if (ticket.quantity > 1) {
 						alert(' Only one ticket is allowed for this code type');
 					} else {
-						if (ticket.amount === data?.tier.price)
+						if (ticket.amount === data?.tier.price) {
 							ticket.amount = (1 - data.value) * ticket.amount;
+							console.log(ticket.amount);
+							let val = 0;
+							for (const ticket of tickets) {
+								val += ticket.amount * ticket.quantity;
+							}
+							setTotal(val);
+						}
 					}
 				}
 			}
@@ -79,7 +90,7 @@ const TicketSummary = ({
 	const [total, setTotal] = useState<number>(0);
 
 	const [code, setCode] = useState<string>('');
-	const [refCode, setrefCode] = useState<string>('');
+	const [refCode, setrefCode] = useState<string | undefined>(refCodeQuery);
 	useEffect(() => {
 		let val = 0;
 		console.log(tickets);
@@ -87,6 +98,7 @@ const TicketSummary = ({
 			val += ticket.amount * ticket.quantity;
 		}
 		setTotal(val);
+		console.log(refCode);
 	}, [isOpen]);
 
 	return (
@@ -109,12 +121,15 @@ const TicketSummary = ({
 						className="input input-sm input-bordered mt-2 w-32 mr-2"
 						placeholder="PROMO CODE"
 						onChange={(e) => setCode(e.target.value)}
-						onBlur={() => codeQuery.mutate({ code: code })}
+						onBlur={() => {
+							code !== '' && codeQuery.mutate({ code: code });
+						}}
 					/>
 					<input
 						type="text"
 						className="input input-sm input-bordered mt-2 w-36 ml-2"
 						placeholder="REFERRAL CODE"
+						value={refCode || ''}
 						onChange={(e) => setrefCode(e.target.value)}
 					/>
 				</div>
@@ -128,7 +143,38 @@ const TicketSummary = ({
 							<div className="text-xl font-semibold text-primary">{ticket.tier.name}</div>
 
 							<div className="flex items-center gap-6 justify-between">
-								<div className="text-lg font-medium ">${ticket.amount}</div>
+								{codeQuery.isLoading ? (
+									<svg
+										version="1.1"
+										id="L9"
+										xmlns="http://www.w3.org/2000/svg"
+										xmlnsXlink="http://www.w3.org/1999/xlink"
+										x="0px"
+										y="0px"
+										viewBox="0 0 100 100"
+										enableBackground="new 0 0 0 0"
+										xmlSpace="preserve"
+										className="w-6 h-6 mx-auto"
+									>
+										<path
+											fill="#000"
+											d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+										>
+											<animateTransform
+												attributeName="transform"
+												attributeType="XML"
+												type="rotate"
+												dur="1s"
+												from="0 50 50"
+												to="360 50 50"
+												repeatCount="indefinite"
+											/>
+										</path>
+									</svg>
+								) : (
+									<div className="text-lg font-medium ">${ticket.amount}</div>
+								)}
+
 								<div>{ticket.quantity}</div>
 							</div>
 						</div>

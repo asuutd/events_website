@@ -85,16 +85,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					res.status(200).json({ received: true });
 					break;
 				case 'charge.refunded':
-					const refundData = event.data.object as Stripe.Charge;
-					const ticketId = refundData.metadata.ticketId || ':)';
-					await prisma.ticket.update({
-						where: {
-							id: ticketId
-						},
-						data: {
-							tierId: undefined
+					const chargeData = event.data.object as Stripe.Charge;
+					if (chargeData.refunds?.data) {
+						let ticketIds: string[] = [];
+						chargeData.refunds.data.forEach(
+							(refund) =>
+								refund.metadata?.ticketId !== undefined && ticketIds.push(refund.metadata.ticketId)
+						);
+						if (ticketIds.length > 1) {
+							throw new Error('HAHA');
 						}
-					});
+
+						await prisma.ticket.updateMany({
+							where: {
+								id: {
+									in: ticketIds
+								}
+							},
+							data: {
+								tierId: undefined
+							}
+						});
+					}
+
+					res.status(200).json({ received: true });
 				default:
 					console.log(`Unhandled event type ${event.type}`);
 			}
