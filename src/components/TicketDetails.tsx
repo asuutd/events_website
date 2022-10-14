@@ -38,7 +38,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 				console.error(err);
 			}
 		};
-		generateQR(`https://events.utd-asu.com/ticket/${ticket.id}/validate`);
+		generateQR(`https://events.utd-asu.com/tickets/${ticket.id}/validate`);
 	}, []);
 	const root = useRef(null);
 	useEffect(() => {
