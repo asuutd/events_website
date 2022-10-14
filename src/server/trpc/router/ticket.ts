@@ -246,6 +246,37 @@ export const ticketRouter = t.router({
 		});
 	}),
 
+	validateTicket: authedProcedure
+		.input(
+			z.object({
+				eventId: z.string(),
+				ticketId: z.string()
+			})
+		)
+		.mutation(async ({ input, ctx }) => {
+			const admin = await ctx.prisma.eventAdmin.findFirst({
+				where: {
+					eventId: input.eventId,
+					userId: ctx.session.user.id
+				}
+			});
+			if (!admin) {
+				throw new TRPCError({
+					code: 'UNAUTHORIZED',
+					message: `You are not an admin for this event`
+				});
+			}
+
+			return ctx.prisma.ticket.update({
+				where: {
+					id: input.ticketId
+				},
+				data: {
+					checkedInAt: new Date()
+				}
+			});
+		}),
+
 	getTicOrRef: authedProcedure
 		.input(
 			z.object({
