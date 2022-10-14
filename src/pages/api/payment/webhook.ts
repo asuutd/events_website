@@ -25,9 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const sigString: string = typeof sig === 'string' ? sig : sig == undefined ? ':)' : sig[0]!;
 
 		let event: Stripe.Event;
-		console.log(req.body);
+		console.log(env.WEBHOOK_SECRET, sigString);
+
 		try {
-			event = stripe.webhooks.constructEvent(buf.toString(), sigString, env.WEBHOOK_SECRET);
+			event = stripe.webhooks.constructEvent(buf, sigString, env.WEBHOOK_SECRET);
 		} catch (err: any) {
 			res.status(400).send(`Webhook Error: ${err.message}`);
 			return;
@@ -85,16 +86,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					res.status(200).json({ received: true });
 					break;
 				case 'charge.refunded':
-					const refundData = event.data.object as Stripe.Charge;
-					const ticketId = refundData.metadata.ticketId || ':)';
-					await prisma.ticket.update({
-						where: {
-							id: ticketId
-						},
-						data: {
-							tierId: undefined
-						}
-					});
+					const chargeData = event.data.object as Stripe.Charge;
+					console.log(chargeData.metadata.ticketId);
+
+					if (chargeData.refunds) {
+						const ticketIds = chargeData.refunds.data.map((data) => data.metadata?.ticketId);
+						const result = await prisma.ticket.update({
+							where: {
+								id: ticketIds[0]
+							},
+							data: {
+								tierId: undefined
+							}
+						});
+						res.status(200).json({ received: true, result: result, tickets: ticketIds[0] });
+					} else {
+						res.status(200).json({
+							received: true,
+							message: 'PLEASE GOD'
+						});
+					}
+
+					break;
 				default:
 					console.log(`Unhandled event type ${event.type}`);
 			}

@@ -55,6 +55,8 @@ const Event: NextPage = () => {
 	const { id, refCode } = router.query;
 
 	const eventId: string = typeof id === 'string' ? id : id == undefined ? ':)' : id[0]!;
+	const ref: string | undefined =
+		typeof refCode === 'string' ? refCode : refCode == undefined ? undefined : refCode[0]!;
 
 	const event = trpc.event.getEvent.useQuery(
 		{ eventId: eventId },
@@ -116,7 +118,14 @@ const Event: NextPage = () => {
 				<div className="flex justify-center lg:justify-between mx-auto">
 					<div className="">
 						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Event</h2>
-						<h3 className="uppercase text-5xl font-semibold mx-2 my-6">Fall Ball 2022</h3>
+						{event.isFetched ? (
+							<h3 className="uppercase text-4xl sm:text-5xl font-semibold mx-2 my-6">
+								{event.data?.name}
+							</h3>
+						) : (
+							<h3 className="h-12 w-96 bg-base-200 animate-pulse rounded-md"></h3>
+						)}
+
 						<div className="mx-2 my-6  ">
 							<div className="flex mb-2 gap-3">
 								<svg
@@ -140,7 +149,7 @@ const Event: NextPage = () => {
 						</div>
 
 						<h2 className="text-4xl text-primary font-bold mx-2 my-6">Tickets</h2>
-						{event.data &&
+						{event.data ? (
 							event.data.Tier.map((tier) => (
 								<div
 									key={tier.id}
@@ -167,7 +176,10 @@ const Event: NextPage = () => {
 										</div>
 									</div>
 								</div>
-							))}
+							))
+						) : (
+							<div className="flex flex-col lg:flex-row justify-between mx-2 gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"></div>
+						)}
 						{status === 'authenticated' ? (
 							<div className="flex justify-between items-end">
 								<button
@@ -202,7 +214,12 @@ const Event: NextPage = () => {
 						)}
 
 						<Modal isOpen={isOpen} closeModal={closeModal}>
-							<TicketSummary isOpen={isOpen} tickets={tickets} eventId={eventId} />
+							<TicketSummary
+								isOpen={isOpen}
+								tickets={tickets}
+								eventId={eventId}
+								refCodeQuery={ref}
+							/>
 						</Modal>
 
 						<Modal isOpen={isRefOpen} closeModal={closeRefModal}>
