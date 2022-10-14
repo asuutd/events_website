@@ -24,6 +24,15 @@ const ValidatePage: NextPage = () => {
 		}
 	);
 
+	const validateTicket = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		e.preventDefault();
+		admin.isSuccess &&
+			validate.mutate({
+				eventId: admin.data.eventId,
+				ticketId: ticketId
+			});
+	};
+
 	useEffect(() => {
 		if (router.isReady) {
 			admin.refetch();
@@ -35,12 +44,8 @@ const ValidatePage: NextPage = () => {
 		<div className="flex flex-col justify-center min-h-[66vh] gap-3">
 			<button
 				className={`btn btn-primary ${errorText && 'btn-disabled'}`}
-				onClick={() => {
-					admin.isSuccess &&
-						validate.mutate({
-							eventId: admin.data.eventId,
-							ticketId: ticketId
-						});
+				onClick={(e) => {
+					validateTicket(e);
 				}}
 			>
 				{' '}
