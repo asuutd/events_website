@@ -91,7 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 					if (chargeData.refunds) {
 						const ticketIds = chargeData.refunds.data.map((data) => data.metadata?.ticketId);
-						const result = await prisma.ticket.updateMany({
+						const result = await prisma.ticket.update({
 							where: {
 								id: ticketIds[0]
 							},
@@ -99,7 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 								tierId: undefined
 							}
 						});
-						res.status(200).json({ received: true, message: result });
+						res.status(200).json({ received: true, result: result, tickets: ticketIds[0] });
 					} else {
 						res.status(200).json({
 							received: true,
