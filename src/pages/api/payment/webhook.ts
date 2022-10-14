@@ -93,9 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						const ticketIds = chargeData.refunds.data.map((data) => data.metadata?.ticketId);
 						const result = await prisma.ticket.updateMany({
 							where: {
-								OR: ticketIds.map((ticket) => ({
-									id: ticket
-								}))
+								id: ticketIds[0]
 							},
 							data: {
 								tierId: undefined
