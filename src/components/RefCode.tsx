@@ -97,11 +97,11 @@ const RefCode = ({
               Referral Code for {event.name}
             </Dialog.Title>
             {refCode.isSuccess && (
-              <div className="mx-auto">
-                <h2 className="text-6xl my-4 text-center font-bold text-primary">
+              <div className="mx-auto flex flex-col gap-4 my-2">
+                <h2 className="text-6xl  text-center font-bold text-primary">
                   {refCode.data.code}
                 </h2>
-                <button className="btn" onClick={() => {
+                <button className="btn btn-secondary" onClick={() => {
                   const prevMsg = refMsg
                   const resetMsg = () => setTimeout(() => setRefMsg(prevMsg), 1000)
                   let link = window.location.href
