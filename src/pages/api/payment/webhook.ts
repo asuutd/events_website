@@ -88,10 +88,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				case 'charge.refunded':
 					const chargeData = event.data.object as Stripe.Charge;
 					console.log(chargeData.metadata.ticketId);
-					if (chargeData.metadata.ticketId) {
-						await prisma.ticket.update({
+
+					if (chargeData.refunds) {
+						const ticketIds = chargeData.refunds.data.map(
+							(data) => data.metadata?.ticketId || ':)'
+						);
+						await prisma.ticket.updateMany({
 							where: {
-								id: chargeData.metadata.ticketId
+								id: {
+									in: ticketIds
+								}
 							},
 							data: {
 								tierId: undefined
@@ -99,13 +105,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						});
 						res.status(200).json({ received: true, message: 'THANK GOD' });
 					} else {
-						res
-							.status(200)
-							.json({
-								received: true,
-								message: 'PLEASE GOD',
-								data: chargeData.refunds?.data.map((data) => data.metadata)
-							});
+						res.status(200).json({
+							received: true,
+							message: 'PLEASE GOD'
+						});
 					}
 
 					break;
