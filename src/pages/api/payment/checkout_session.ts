@@ -21,31 +21,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					res.status(400);
 				} else {
 					const [event, code] = await Promise.all([
-						prisma.event.findFirst({
-							where: {
-								id: eventId,
-								Tier: {
-									some: {
-										OR: tiers.map((tier: any) => ({
-											id: tier.tierId
-										}))
+						eventId
+							? prisma.event.findFirst({
+									where: {
+										id: eventId,
+										Tier: {
+											some: {
+												OR: tiers.map((tier: any) => ({
+													id: tier.tierId
+												}))
+											}
+										}
+									},
+									include: {
+										Tier: true
 									}
-								}
-							},
-							include: {
-								Tier: true
-							}
-						}),
-						prisma.code.findFirst({
-							where: {
-								code: codeId
-							},
-							include: {
-								_count: {
-									select: { tickets: true }
-								}
-							}
-						})
+							  })
+							: null,
+						codeId
+							? prisma.code.findFirst({
+									where: {
+										code: codeId
+									},
+									include: {
+										_count: {
+											select: { tickets: true }
+										}
+									}
+							  })
+							: null
 					]);
 					console.log(event);
 					if (event?.Tier) {
