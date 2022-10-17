@@ -58,7 +58,7 @@ model User {
   tickets       Ticket[]
   RefCode       RefCode[]
   EventAdmin    EventAdmin[]
-  Events         Event[]
+  Events        Event[]
 }
 
 model VerificationToken {
@@ -75,13 +75,14 @@ model Event {
   end          DateTime
   name         String
   image        String?
+  ticketImage  String?
   ref_quantity Int?
   tickets      Ticket[]
   RefCode      RefCode[]
   Tier         Tier[]
   EventAdmin   EventAdmin[]
   organizerId  String?
-  organizer    User?   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  organizer    User?        @relation(fields: [organizerId], references: [id], onDelete: Cascade)
 }
 
 model EventAdmin {

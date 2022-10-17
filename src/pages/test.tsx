@@ -7,7 +7,17 @@ import Modal from '../components/Modal';
 import { trpc } from '../utils/trpc';
 
 const Test: NextPage = () => {
-	return <h1> PELUMI&apos;s SAFE SPACE</h1>;
+	const makeCodes = trpc.code.createCode.useMutation();
+	return (
+		<button
+			className="btn btn-primary"
+			onClick={() =>
+				makeCodes.mutate({ tierId: 'cl97kk7pc000cuhr8wgys550g', value: 0.5, num_codes: 15 })
+			}
+		>
+			CLICK
+		</button>
+	);
 };
 
 export default Test;
