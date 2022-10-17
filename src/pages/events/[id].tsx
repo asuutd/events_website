@@ -114,8 +114,19 @@ const Event: NextPage = () => {
 			<Head>
 				<title>ASU Fall Ball 2022</title>
 			</Head>
-			<main className="mx-6   py-2 ">
-				<div className="flex justify-center lg:justify-between mx-auto">
+			<main className="mx-2   py-2 ">
+				<div className="flex flex-col justify-center mx-auto max-w-3xl">
+					<div className="">
+						{event.data?.image ? (
+							<img
+								src={event.data.image}
+								alt=""
+								className="w-auto rounded-md object-fill mx-auto"
+							/>
+						) : (
+							<p className="h-[580px] w-[450px] animate-pulse bg-gray-200"></p>
+						)}
+					</div>
 					<div className="">
 						<h2 className="text-4xl text-primary font-bold  my-6">Event</h2>
 						{event.isFetched ? (
@@ -142,15 +153,24 @@ const Event: NextPage = () => {
 							<div className="mt-2 flex gap-3 items-center">
 								<img src="/clock.svg" alt="" className="w-5 h-5 " />
 								<div className="flex flex-col">
-									<div>{event.data?.start.toLocaleDateString()}</div>
-									<div>
-										{event.data?.start.toLocaleTimeString([], {
-											hour: '2-digit',
-											minute: '2-digit'
-										})}{' '}
-										to{' '}
-										{event.data?.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-									</div>
+									{event.data ? (
+										<>
+											<div>{event.data?.start.toLocaleDateString()}</div>
+											<div>
+												{event.data?.start.toLocaleTimeString([], {
+													hour: '2-digit',
+													minute: '2-digit'
+												})}{' '}
+												to{' '}
+												{event.data?.end.toLocaleTimeString([], {
+													hour: '2-digit',
+													minute: '2-digit'
+												})}
+											</div>
+										</>
+									) : (
+										<p className="h-12 w-48 animate-pulse bg-gray-200 rounded-md" />
+									)}
 								</div>
 							</div>
 						</div>
@@ -160,7 +180,7 @@ const Event: NextPage = () => {
 							event.data.Tier.map((tier) => (
 								<div
 									key={tier.id}
-									className="flex flex-col lg:flex-row justify-between w-auto gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"
+									className="flex flex-col lg:flex-row justify-between w-auto gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3 max-w-lg"
 								>
 									<div className="font-semibold">{tier.name}</div>
 
@@ -173,7 +193,9 @@ const Event: NextPage = () => {
 												className="w-7 h-7 "
 												onClick={() => setTicketQuantity(quantity - 1, UpOrDown.Desc, tier)}
 											/>
-											{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
+											<div className="w-8 text-center">
+												{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
+											</div>
 											<img
 												src="/plus.svg"
 												alt=""
@@ -232,14 +254,6 @@ const Event: NextPage = () => {
 						<Modal isOpen={isRefOpen} closeModal={closeRefModal}>
 							<RefCode event={event.data} />
 						</Modal>
-					</div>
-
-					<div className="hidden lg:block">
-						<img
-							src="https://ucarecdn.com/507bbe81-26dd-4cec-ad8c-978419c619eb/-/preview/-/quality/smart/-/format/auto/"
-							alt=""
-							className="max-w-md"
-						/>
 					</div>
 				</div>
 			</main>
