@@ -31,7 +31,12 @@ const TicketSummary = ({
 						alert(' Only one ticket is allowed for this code type');
 					} else {
 						if (ticket.amount === data?.tier.price && data.limit > data._count.tickets) {
-							ticket.amount = (1 - data.value) * ticket.amount;
+							if (data.type === 'percent') {
+								ticket.amount = (1 - data.value) * ticket.amount;
+							} else if (data.type === 'flat') {
+								ticket.amount = ticket.amount - data.value;
+							}
+
 							console.log(ticket.amount);
 							let val = 0;
 							for (const ticket of tickets) {

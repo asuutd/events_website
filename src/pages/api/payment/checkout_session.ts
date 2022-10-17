@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						}),
 						prisma.code.findFirst({
 							where: {
-								id: refCodeId
+								code: codeId
 							},
 							include: {
 								_count: {
@@ -56,6 +56,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 							console.log(code._count.tickets);
 						}
 						event.Tier.forEach((tier) => {
+							let unit_amount = tier.price;
+							if (remaining > 0 && code && tier.id === code.tierId) {
+								if (code.type === 'percent') {
+									unit_amount = (1 - code.value) * tier.price;
+								} else if (code.type === 'flat') {
+									unit_amount = tier.price - code.value;
+								}
+							}
+							console.log(unit_amount, code?.type, 'line 67');
 							const line_item = {
 								// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
 								price_data: {
@@ -64,10 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 										name: tier.name || 'Free Ticket',
 										images: [event.image]
 									},
-									unit_amount:
-										(remaining > 0 && code && tier.id === code.tierId
-											? (1 - code.value) * tier.price
-											: tier.price) * 100
+									unit_amount: unit_amount * 100
 								},
 								quantity: tiers.find((tier2: any) => tier2.tierId === tier.id)?.quantity || 1
 							};
