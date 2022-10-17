@@ -119,6 +119,9 @@ model Code {
   limit   Int
   tier    Tier     @relation(fields: [tierId], references: [id], onDelete: Cascade)
   tickets Ticket[]
+  
+
+  @@unique([code, tierId])
 }
 
 model Tier {
