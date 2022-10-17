@@ -38,7 +38,6 @@ const Ticket: NextPage = () => {
 
 			setPast(small);
 			setUpcoming(large);
-
 		},
 		onError: (err) => {
 			switch (err?.data?.code) {
@@ -180,7 +179,7 @@ function TicketCard(props: {
 				<div className="relative flex flex-col w-full justify-center items-center overflow-hidden text-left">
 					<div className="w-full h-[60%] absolute top-0 left-0">
 						<Image
-							src={ticket.event.image || ''}
+							src={ticket.event.ticketImage || ''}
 							alt=""
 							sizes="33vw"
 							fill
@@ -190,7 +189,7 @@ function TicketCard(props: {
 					<div className="z-[1] flex flex-col content-start gap-2 p-4">
 						<div className="place-self-center rounded-full my-2 h-4 w-16 bg-white border shadow-inner"></div>
 						<Image
-							src={ticket.event.image || ''}
+							src={ticket.event.ticketImage || ''}
 							alt=""
 							priority={priority}
 							sizes="33vw"
