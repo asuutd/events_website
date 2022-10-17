@@ -72,12 +72,13 @@ const Event: NextPage = () => {
 	const setTicketQuantity = (val: number, dir: UpOrDown, tier: Tier) => {
 		const newTickets = [...tickets];
 		const newTicket = newTickets.find((ticket) => ticket.tier.id === tier.id);
-
-		if (newTicket === undefined) {
-			const newTicket2: Ticket = { tier: tier, amount: tier.price, quantity: 1 };
-			//setQuantity(quantity + 1);
-			setTickets([...tickets, newTicket2]);
-			setCheckout(true);
+		if (!newTicket) {
+			if (dir !== UpOrDown.Desc) {
+				const newTicket2: Ticket = { tier: tier, amount: tier.price, quantity: 1 };
+				//setQuantity(quantity + 1);
+				setTickets([...tickets, newTicket2]);
+				setCheckout(true);
+			}
 		} else {
 			if (newTicket?.quantity > 15 && dir === UpOrDown.Asc) return;
 			if (newTicket?.quantity == 0 && dir === UpOrDown.Desc) return;
@@ -163,14 +164,14 @@ const Event: NextPage = () => {
 											<img
 												src="/minus.svg"
 												alt=""
-												className="w-7 h-7 "
+												className="w-7 h-7 cursor-pointer"
 												onClick={() => setTicketQuantity(quantity - 1, UpOrDown.Desc, tier)}
 											/>
 											{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
 											<img
 												src="/plus.svg"
 												alt=""
-												className="w-7 h-7 "
+												className="w-7 h-7 cursor-pointer"
 												onClick={() => setTicketQuantity(quantity + 1, UpOrDown.Asc, tier)}
 											/>
 										</div>
