@@ -103,20 +103,6 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 									>
 										QR Code
 									</Tab>
-									<Tab
-										key={'BarCode'}
-										className={({ selected }) =>
-											classNames(
-												'w-max rounded-lg p-2.5 text-sm font-medium leading-5 text-primary',
-												'ring-white ring-opacity-60 ring-offset-2 ring-offset-base-200 focus:outline-none focus:ring-2',
-												selected
-													? 'bg-white shadow'
-													: 'text-secondary hover:bg-white/[0.12] hover:text-white'
-											)
-										}
-									>
-										Barcode
-									</Tab>
 								</Tab.List>
 								<Tab.Panels className="mt-2">
 									<Tab.Panel
