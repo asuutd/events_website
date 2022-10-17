@@ -57,7 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						}
 						event.Tier.forEach((tier) => {
 							let unit_amount = tier.price;
-							if (remaining > 0 && code && tier.id === code.tierId) {
+							if (remaining > 0 && code && codeId && tier.id === code.tierId) {
+								console.log(code, codeId);
 								if (code.type === 'percent') {
 									unit_amount = (1 - code.value) * tier.price;
 								} else if (code.type === 'flat') {
