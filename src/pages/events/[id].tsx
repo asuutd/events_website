@@ -125,7 +125,11 @@ const Event: NextPage = () => {
 								className="w-auto rounded-md object-fill mx-auto"
 							/>
 						) : (
-							<p className="h-[580px] w-[450px] animate-pulse bg-gray-200"></p>
+							<img
+								src="/placeholder.svg"
+								alt=""
+								className="w-auto rounded-md object-fill mx-auto bg-gray-200"
+							/>
 						)}
 					</div>
 					<div className="">
