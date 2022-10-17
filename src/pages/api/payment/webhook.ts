@@ -46,20 +46,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					const userId = metadata.userId;
 
 					const [refCode, code] = await Promise.all([
-						prisma.refCode.findFirst({
-							where: {
-								code: metadata.refCodeId
-							},
-							select: {
-								id: true,
-								userId: true
-							}
-						}),
-						prisma.code.findFirst({
-							where: {
-								code: metadata.codeId
-							}
-						})
+						metadata.refCodeId
+							? prisma.refCode.findFirst({
+									where: {
+										code: metadata.refCodeId
+									},
+									select: {
+										id: true,
+										userId: true
+									}
+							  })
+							: null,
+						metadata.codeId
+							? prisma.code.findFirst({
+									where: {
+										code: metadata.codeId
+									}
+							  })
+							: null
 					]);
 					if (refCode) refCodeId = refCode.id;
 					if (userId === refCode?.userId) sameOwner = true;
