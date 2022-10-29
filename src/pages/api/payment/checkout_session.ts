@@ -15,6 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			if (userSession?.user?.id) {
 				const { eventId, tiers, codeId, refCodeId } = req.body;
 				console.log(req.headers.origin);
+				console.log(tiers);
 				console.log(req.body);
 				// Create Checkout Sessions from body params.
 				if (!eventId && !tiers) {
@@ -34,7 +35,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 										}
 									},
 									include: {
-										Tier: true
+										Tier: {
+											where: {
+												id: {
+													in: tiers.map((tier: any) => tier.tierId)
+												}
+											}
+										}
 									}
 							  })
 							: null,
