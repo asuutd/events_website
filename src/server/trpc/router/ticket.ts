@@ -153,7 +153,8 @@ export const ticketRouter = t.router({
 	refundTicket: authedProcedure
 		.input(
 			z.object({
-				eventId: z.string()
+				eventId: z.string(),
+				ticketId: z.string().nullish()
 			})
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -193,6 +194,27 @@ export const ticketRouter = t.router({
 					code: 'BAD_REQUEST',
 					message: 'This event does not exist'
 				});
+			}
+			if (userId === event.organizerId && input.ticketId) {
+				const ticket = await ctx.prisma.ticket.findFirst({
+					where: {
+						id: input.ticketId
+					},
+					include: {
+						tier: true
+					}
+				});
+
+				if (ticket?.paymentIntent && ticket?.tier) {
+					await stripe.refunds.create({
+						payment_intent: ticket.paymentIntent,
+						amount: ticket?.tier.price * 100,
+						metadata: {
+							ticketId: ticket.id
+						}
+					});
+				}
+				return;
 			}
 
 			const freeTicket = event.tickets.find((ticket) => ticket.tierId === null);

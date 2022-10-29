@@ -48,7 +48,7 @@ export const codeRouter = t.router({
 				}
 			});
 			if (tier?.event.organizerId === ctx.session.user.id) {
-				if (input.type === 'flat' && input.value < tier.price) {
+				if (input.type === 'flat' && input.value > tier.price) {
 					throw new TRPCError({
 						code: 'BAD_REQUEST',
 						message: 'Discount more than ticket price'
