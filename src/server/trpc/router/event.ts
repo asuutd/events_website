@@ -14,7 +14,22 @@ export const eventRouter = t.router({
 					id: input.eventId
 				},
 				include: {
-					Tier: true
+					Tier: {
+						where: {
+							AND: [
+								{
+									start: {
+										lte: new Date()
+									}
+								},
+								{
+									end: {
+										gte: new Date()
+									}
+								}
+							]
+						}
+					}
 				}
 			});
 

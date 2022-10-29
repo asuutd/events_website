@@ -12,7 +12,13 @@ const Test: NextPage = () => {
 		<button
 			className="btn btn-primary"
 			onClick={() =>
-				makeCodes.mutate({ tierId: 'cl97kk7pc000cuhr8wgys550g', value: 0.5, num_codes: 15 })
+				makeCodes.mutate({
+					type: 'flat',
+					num_codes: 12,
+					limit: 1,
+					value: 5,
+					tierId: 'cl97kk7pc000cuhr8wgys550g'
+				})
 			}
 		>
 			CLICK
