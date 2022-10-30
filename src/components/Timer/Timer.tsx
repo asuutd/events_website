@@ -18,15 +18,15 @@ const Timer = ({ endTime }: { endTime: Date }) => {
 
 	useEffect(() => {
 		console.log(countDownDate);
-		var updateTime = setInterval(() => {
-			var now = Date.now();
+		let updateTime = setInterval(() => {
+			let now = Date.now();
 
-			var difference = countDownDate - now;
+			let difference = countDownDate - now;
 
-			var newDays = Math.floor(difference / (1000 * 60 * 60 * 24));
-			var newHours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-			var newMinutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-			var newSeconds = Math.floor((difference % (1000 * 60)) / 1000);
+			let newDays = Math.floor(difference / (1000 * 60 * 60 * 24));
+			let newHours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			let newMinutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+			let newSeconds = Math.floor((difference % (1000 * 60)) / 1000);
 
 			setDays(newDays);
 			setHours(newHours);
