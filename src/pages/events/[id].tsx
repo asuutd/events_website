@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../../components/Modal';
 import RefCode from '../../components/RefCode';
 import TicketSummary from '../../components/TicketSummary';
+import Timer from '../../components/Timer/Timer';
 import { useModalStore } from '../../utils/modalStore';
 import { trpc } from '../../utils/trpc';
 
@@ -187,7 +188,10 @@ const Event: NextPage = () => {
 									key={tier.id}
 									className="flex flex-col lg:flex-row justify-between w-auto gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3 max-w-lg"
 								>
-									<div className="font-semibold">{tier.name}</div>
+									<div className="font-semibold flex flex-col">
+										<div>{tier.name}</div>
+										<Timer endTime={tier.end} />
+									</div>
 
 									<div className="flex items-center gap-6">
 										<div className="text-secondary">${tier.price}</div>
