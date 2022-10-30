@@ -104,7 +104,7 @@ const LoginForm = ({
 								className={` rounded-md flex gap-1 content-center px-2 py-3 my-2 justify-start ${
 									provider.id === 'facebook' ? 'bg-[#1778F2] text-white' : 'bg-slate-200 text-black'
 								}`}
-								onClick={() => signIn(provider.id, { callbackUrl: router.pathname })}
+								onClick={() => signIn(provider.id, { callbackUrl: window.location.href })}
 							>
 								<img
 									src={`/OAuthProviderIcons/${provider.name}.svg`}
