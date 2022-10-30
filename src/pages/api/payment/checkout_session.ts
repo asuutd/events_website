@@ -37,9 +37,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 									include: {
 										Tier: {
 											where: {
-												id: {
-													in: tiers.map((tier: any) => tier.tierId)
-												}
+												AND: [
+													{
+														id: {
+															in: tiers.map((tier: any) => tier.tierId)
+														}
+													},
+													{
+														start: {
+															lte: new Date()
+														}
+													},
+													{
+														end: {
+															gte: new Date()
+														}
+													}
+												]
 											}
 										}
 									}
