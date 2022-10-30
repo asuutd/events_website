@@ -14,19 +14,19 @@ const Timer = ({ endTime }: { endTime: Date }) => {
 
 	const timeToDays = time;
 
-	let countDownDate = new Date().getTime() + timeToDays;
+	const countDownDate = new Date().getTime() + timeToDays;
 
 	useEffect(() => {
 		console.log(countDownDate);
-		let updateTime = setInterval(() => {
-			let now = Date.now();
+		const updateTime = setInterval(() => {
+			const now = Date.now();
 
-			let difference = countDownDate - now;
+			const difference = countDownDate - now;
 
-			let newDays = Math.floor(difference / (1000 * 60 * 60 * 24));
-			let newHours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-			let newMinutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-			let newSeconds = Math.floor((difference % (1000 * 60)) / 1000);
+			const newDays = Math.floor(difference / (1000 * 60 * 60 * 24));
+			const newHours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			const newMinutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+			const newSeconds = Math.floor((difference % (1000 * 60)) / 1000);
 
 			setDays(newDays);
 			setHours(newHours);
@@ -55,7 +55,7 @@ const Timer = ({ endTime }: { endTime: Date }) => {
 	};
 
 	const handleChange = (e: any) => {
-		let inputTime = e.target.value;
+		const inputTime = e.target.value;
 		setNewTime(inputTime);
 	};
 
