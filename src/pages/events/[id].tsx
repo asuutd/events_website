@@ -186,9 +186,9 @@ const Event: NextPage = () => {
 							event.data.Tier.map((tier) => (
 								<div
 									key={tier.id}
-									className="flex flex-col lg:flex-row justify-between w-auto gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3 max-w-lg"
+									className="flex flex-col lg:flex-row justify-between w-auto gap-2 lg:gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3 max-w-lg"
 								>
-									<div className="font-semibold flex flex-col">
+									<div className="font-semibold flex flex-col items-center">
 										<div>{tier.name}</div>
 										<Timer endTime={tier.end} />
 									</div>
