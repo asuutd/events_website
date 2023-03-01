@@ -97,7 +97,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 									currency: 'usd',
 									product_data: {
 										name: tier.name || 'Free Ticket',
-										images: [event.image]
+										...(event.image
+											? {
+													images: [event.image]
+											  }
+											: null)
 									},
 									unit_amount: unit_amount * 100
 								},
