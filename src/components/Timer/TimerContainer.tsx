@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NumberBox } from './Numberbox';
 
 interface timeProps {
@@ -14,6 +14,10 @@ export const TimerContainer = ({ days, hours, minutes, seconds, urgent }: timePr
 	let hoursFlip = false;
 	let minutesFlip = false;
 	let secondsFlip = true;
+
+	useEffect(() => {
+		console.log(urgent);
+	}, []);
 
 	if (seconds <= 0 && minutes <= 0 && hours <= 0 && days <= 0) {
 		daysFlip = false;

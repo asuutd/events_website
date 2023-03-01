@@ -4,13 +4,11 @@ import { useEffect, useState } from 'react';
 import { TimerContainer } from '../Timer/TimerContainer';
 
 const Timer = ({ endTime }: { endTime: Date }) => {
-	const [time, setTime] = useState<number>(endTime.getTime() - Date.now());
-	const [newTime, setNewTime] = useState<number>(0);
+	const [time, _] = useState<number>(endTime.getTime() - Date.now());
 	const [days, setDays] = useState<number>(0);
 	const [hours, setHours] = useState<number>(0);
 	const [minutes, setMinutes] = useState<number>(0);
 	const [seconds, setSeconds] = useState<number>(0);
-	const [message, setMessage] = useState<string>('');
 
 	const timeToDays = time;
 
@@ -35,7 +33,6 @@ const Timer = ({ endTime }: { endTime: Date }) => {
 
 			if (difference <= 0) {
 				clearInterval(updateTime);
-				setMessage('The Launch Has Started');
 				setDays(0);
 				setHours(0);
 				setMinutes(0);
@@ -48,24 +45,13 @@ const Timer = ({ endTime }: { endTime: Date }) => {
 		};
 	}, [time]);
 
-	const handleClick = () => {
-		setTime(newTime);
-		console.log(time);
-		setNewTime(0);
-	};
-
-	const handleChange = (e: any) => {
-		const inputTime = e.target.value;
-		setNewTime(inputTime);
-	};
-
 	return (
 		<TimerContainer
 			days={days}
 			hours={hours}
 			minutes={minutes}
 			seconds={seconds}
-			urgent={endTime.getDate() - 1 < new Date().getDate()}
+			urgent={endTime.getTime() - new Date().getTime() < 86400000}
 		/>
 	);
 };

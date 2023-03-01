@@ -130,7 +130,13 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 								</p>
 								<ul className="text-xs font-mono flex  border border-primary divide-x divide-primary text-primary w-max">
 									<li className="py-1 px-2">${ticket.tier?.price || '0'}</li>
-									<li className="py-1 px-2">{ticket.tier?.name || 'Free Ticket'}</li>
+									<li className="py-1 px-2">
+										{ticket.tier && ticket.paymentIntent
+											? ticket.tier.name
+											: ticket.tier
+											? `${ticket.tier.name}(Cash)`
+											: 'Free Ticket'}
+									</li>
 									<li className="py-1 px-2">{ticket.event.start.toLocaleTimeString()}</li>
 								</ul>
 							</div>
