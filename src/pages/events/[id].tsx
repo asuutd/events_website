@@ -2,14 +2,20 @@ import type { Tier } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { NextPage } from 'next/types';
+import { GetServerSideProps, NextPage } from 'next/types';
 import React, { useEffect, useState } from 'react';
 import Modal from '../../components/Modal';
 import RefCode from '../../components/RefCode';
 import TicketSummary from '../../components/TicketSummary';
 import Timer from '../../components/Timer/Timer';
+import { getServerAuthSession } from '../../server/common/get-server-auth-session';
+import { appRouter } from '../../server/trpc/router';
 import { useModalStore } from '../../utils/modalStore';
 import { trpc } from '../../utils/trpc';
+import { prisma } from '../../server/db/client';
+import isbot from 'isbot';
+import { NextSeo } from 'next-seo';
+import { env } from '../../env/client.mjs';
 
 type Ticket = {
 	tier: Tier;
@@ -22,7 +28,13 @@ enum UpOrDown {
 	Desc = 'Descending'
 }
 
-const Event: NextPage = () => {
+const Event: NextPage<{
+	meta: {
+		id: string;
+		title: string;
+		image: string;
+	} | null;
+}> = (props) => {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	//const [modalOpen, setModalOpen] = useState(false);
@@ -113,8 +125,23 @@ const Event: NextPage = () => {
 
 	return (
 		<>
+			<NextSeo
+				title={props?.meta?.title ?? 'Event'}
+				openGraph={{
+					title: `${props?.meta?.title}` ?? 'Event',
+					description: `Evetn Details of ${props?.meta?.title}`,
+					url: `https://${env.NEXT_PUBLIC_URL}/seller/${props.meta?.id}`,
+					type: 'profile',
+					profile: {
+						username: props?.meta?.title
+					},
+					images: [
+						{ url: props.meta?.image ?? ':)', width: 480, height: 270, alt: 'Profile Picture' }
+					]
+				}}
+			/>
 			<Head>
-				<title>ASU Fall Ball 2022</title>
+				<title>{props.meta?.title ?? 'Event'}</title>
 			</Head>
 			<main className="mx-2   py-2 ">
 				<div className="flex flex-col justify-center mx-auto max-w-3xl">
@@ -129,7 +156,7 @@ const Event: NextPage = () => {
 							<img
 								src="/placeholder.svg"
 								alt=""
-								className="w-auto rounded-md object-fill mx-auto bg-gray-200"
+								className="w-full h-auto lg:h-96 rounded-md object-fill mx-auto bg-gray-200"
 							/>
 						)}
 					</div>
@@ -236,7 +263,7 @@ const Event: NextPage = () => {
 							</div>
 						) : status === 'loading' ? (
 							<button
-								className={`flex my-6 mx-2 btn btn-primary justify-self-center btn-lg btn-disabled`}
+								className={`flex max-w-md my-6 mx-2 btn btn-primary justify-self-center btn-lg btn-disabled`}
 								onClick={openModal}
 							>
 								CHECKOUT
@@ -244,7 +271,7 @@ const Event: NextPage = () => {
 						) : (
 							<label
 								tabIndex={0}
-								className="flex my-6 mx-2 btn btn-primary justify-self-center btn-lg"
+								className="flex max-w-md my-6 mx-2 btn btn-primary justify-self-center btn-lg"
 								htmlFor="my-modal-4"
 							>
 								CHECKOUT
@@ -274,3 +301,40 @@ const Event: NextPage = () => {
 };
 
 export default Event;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const uid =
+		typeof context.query.uid === 'string'
+			? context.query.uid
+			: context.query.uid == undefined
+			? ':)'
+			: context.query.uid[0]!;
+	const productId =
+		typeof context.query.productID === 'string'
+			? context.query.productID
+			: context.query.productID == undefined
+			? ':)'
+			: context.query.productID[0]!;
+	if (isbot(context.req.headers['user-agent'])) {
+		const client = appRouter.createCaller({
+			session: await getServerAuthSession(context),
+			prisma: prisma
+		});
+		const data = await client.event.getEvent({
+			eventId: uid
+		});
+
+		return {
+			props: {
+				meta: {
+					id: data?.id,
+					title: data?.name,
+					image: data?.image
+				}
+			}
+		};
+	}
+	return {
+		props: {} // will be passed to the page component as props
+	};
+};
