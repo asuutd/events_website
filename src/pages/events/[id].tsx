@@ -303,25 +303,19 @@ const Event: NextPage<{
 export default Event;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const uid =
-		typeof context.query.uid === 'string'
-			? context.query.uid
-			: context.query.uid == undefined
+	const id =
+		typeof context.query.id === 'string'
+			? context.query.id
+			: context.query.id == undefined
 			? ':)'
-			: context.query.uid[0]!;
-	const productId =
-		typeof context.query.productID === 'string'
-			? context.query.productID
-			: context.query.productID == undefined
-			? ':)'
-			: context.query.productID[0]!;
+			: context.query.id[0]!;
 	if (isbot(context.req.headers['user-agent'])) {
 		const client = appRouter.createCaller({
 			session: await getServerAuthSession(context),
 			prisma: prisma
 		});
 		const data = await client.event.getEvent({
-			eventId: uid
+			eventId: id
 		});
 
 		return {
