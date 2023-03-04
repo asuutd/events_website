@@ -11,21 +11,14 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className="py-2 ">
-				<div className="sm:hero min-h-screen bg-base-100 mx-auto sm:mx-5">
-					<div className="hero-content flex flex-col gap-10 justify-between items-center p-0">
-						<h1 className="text-4xl font-bold text-primary">Fall Ball is Here!!!</h1>
-						<img
-							src="https://ucarecdn.com/0f711f3c-8937-42ad-ade5-5db0e8159edf/-/preview/-/quality/smart/-/format/auto/"
-							className="sm:hidden w-auto lg:max-w-sm rounded-lg shadow-2xl object-fit"
-						/>
-						<img
-							src="https://ucarecdn.com/39567007-8c47-4d19-a39c-a8ecc39aecfc/"
-							className="hidden sm:block w-auto lg:max-w-sm rounded-lg shadow-2xl object-fit"
-						/>
-
-						<Link href="/events/cl8r36itw0000uh8sjkoy3uo7">
-							<a className="btn btn-primary">Get Tickets</a>
-						</Link>
+				<div className="hero h-[60vh] sm:h-[75vh] lg:h-screen bg-hero-sm md:bg-hero-lg rounded-md">
+					<div className="hero-overlay bg-black bg-opacity-60 rounded-md"></div>
+					<div className="hero-content text-center text-neutral-content">
+						<div className="max-w-md">
+							<Link href="/events/clep15dtk0000uh5kq4hy07ud">
+								<a className="btn btn-primary btn-lg">GET TICKETS</a>
+							</Link>
+						</div>
 					</div>
 				</div>
 			</main>

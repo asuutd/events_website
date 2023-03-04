@@ -34,10 +34,10 @@ const Navbar = () => {
 		signOut({ redirect: true, callbackUrl: window.location.href });
 	};
 	return (
-		<div className="navbar bg-base-100">
+		<div className="navbar bg-repeat bg-main-img">
 			<div className="flex-1">
 				<Link className="btn btn-ghost normal-case text-xl" href="/">
-					<a className="flex items-center gap-1">
+					<a className="flex items-center gap-1 text-base-100 font-bold">
 						<img src="/pic_4.png" alt="ASU" className="h-10 w-10" />
 						Events
 					</a>
