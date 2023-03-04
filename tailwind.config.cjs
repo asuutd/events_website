@@ -7,12 +7,9 @@ module.exports = {
 				'slow-spin': 'spin 50s linear infinite'
 			},
 			backgroundImage: {
-				'hero-lg':
-					"url('https://ucarecdn.com/1873c6d8-b49d-4346-8b13-c88802b1b567/-/preview/-/quality/smart/-/format/auto//')",
-				'hero-sm':
-					"url('https://ucarecdn.com/77e47e18-943f-4c5f-bbf6-3a9fcbf3d02a/-/preview/-/quality/smart/-/format/auto//')",
-				'main-img':
-					"url('https://ucarecdn.com/743a3324-3a7a-47d4-b34a-5ae9f0053459/-/preview/587x270/-/quality/smart/-/format/auto//')"
+				'hero-lg': "url('/BGImages/big.jpeg')",
+				'hero-sm': "url('/BGImages/small.jpg')",
+				'main-img': "url('/BGImages/bg.webp')"
 			}
 		}
 	},
