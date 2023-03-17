@@ -141,7 +141,7 @@ const Event: NextPage<{
 				}}
 			/>
 			<Head>
-				<title>{props.meta?.title ?? 'Event'}</title>
+				<title>{props.meta?.title ?? event.data?.name ?? 'Event'}</title>
 			</Head>
 			<main className="mx-2   py-2 ">
 				<div className="flex flex-col justify-center mx-auto max-w-3xl">

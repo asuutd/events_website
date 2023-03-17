@@ -17,7 +17,7 @@ const Test: NextPage = () => {
 					num_codes: 12,
 					limit: 1,
 					value: 5,
-					tierId: 'cl97kk7pc000cuhr8wgys550g'
+					tierId: 'clep16dks0002uh5kjo2xqq6r'
 				})
 			}
 		>
