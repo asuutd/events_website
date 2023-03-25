@@ -82,7 +82,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 							<h2 className="text-lg font-bold">{session?.user?.name}</h2>
 							<p className="text-xs">{session?.user?.email}</p>
 
-							<p className="text-4xl font-bold mt-4 mb-2">{ticket.event.name}</p>
+							<p className="text-4xl font-bold mt-4 mb-2 text-center">{ticket.event.name}</p>
 							<p className="text-gray-500 text-xs mb-2">
 								{ticket.event.start.toLocaleDateString()}
 							</p>
