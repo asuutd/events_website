@@ -1,12 +1,9 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
-import Stripe from 'stripe';
 import { env } from '../../../env/server.mjs';
 import { prisma } from '../../../server/db/client';
 import { getServerAuthSession } from '../../../server/common/get-server-auth-session';
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-	apiVersion: '2022-08-01'
-});
+import stripe from '@/utils/stripe';
+import Stripe from 'stripe';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === 'POST') {

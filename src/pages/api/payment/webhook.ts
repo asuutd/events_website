@@ -7,10 +7,7 @@ import Stripe from 'stripe';
 import { env } from '../../../env/server.mjs';
 import { getServerAuthSession } from '../../../server/common/get-server-auth-session.js';
 import { prisma } from '../../../server/db/client';
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-	apiVersion: '2022-08-01'
-});
+import stripe from '@/utils/stripe';
 
 export const config = {
 	api: {

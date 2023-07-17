@@ -112,7 +112,11 @@ const Events: NextPage = () => {
 										<p>You have no tickets for upcoming events.</p>
 									</div>
 								) : (
-									upcoming.map((event) => <EventCard event={event} />)
+									upcoming.map((event) => (
+										<div key={event.id}>
+											<EventCard event={event} />
+										</div>
+									))
 								)}
 							</Tab.Panel>
 
@@ -127,7 +131,11 @@ const Events: NextPage = () => {
 										<p>You have no tickets for past events.</p>
 									</div>
 								) : (
-									past.map((event) => <EventCard event={event} />)
+									past.map((event) => (
+										<div key={event.id} className="grayscale">
+											<EventCard event={event} />
+										</div>
+									))
 								)}
 							</Tab.Panel>
 						</Tab.Panels>
