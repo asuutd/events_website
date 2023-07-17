@@ -6,6 +6,7 @@ import { ticketRouter } from './ticket';
 import { codeRouter } from './code';
 import { tierRouter } from './tier';
 import { eventRouter } from './event';
+import { organizerRouter } from './organizer';
 
 export const appRouter = t.router({
 	example: exampleRouter,
@@ -13,7 +14,8 @@ export const appRouter = t.router({
 	ticket: ticketRouter,
 	code: codeRouter,
 	tier: tierRouter,
-	event: eventRouter
+	event: eventRouter,
+	organizer: organizerRouter
 });
 
 // export type definition of API

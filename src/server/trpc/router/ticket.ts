@@ -2,13 +2,9 @@ import { authedProcedure, t } from '../trpc';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 
-import Stripe from 'stripe';
 import { env } from '../../../env/server.mjs';
 import { TRPCError } from '@trpc/server';
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-	apiVersion: '2022-08-01'
-});
+import stripe from '../../../utils/stripe';
 
 export const ticketRouter = t.router({
 	createTicket: authedProcedure
@@ -287,6 +283,14 @@ export const ticketRouter = t.router({
 					code: 'UNAUTHORIZED',
 					message: `You are not an admin for this event`
 				});
+			}
+			const ticket = await ctx.prisma.ticket.findFirst({
+				where: {
+					id: input.ticketId
+				}
+			});
+
+			if (ticket?.checkedInAt !== null) {
 			}
 
 			return ctx.prisma.ticket.update({

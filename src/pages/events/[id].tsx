@@ -209,35 +209,35 @@ const Event: NextPage<{
 						</div>
 
 						<h2 className="text-4xl text-primary font-bold  my-6">Tickets</h2>
+
 						{event.data ? (
 							event.data.Tier.map((tier) => (
-								<div
-									key={tier.id}
-									className="flex flex-col lg:flex-row justify-between w-auto gap-2 lg:gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3 max-w-lg"
-								>
-									<div className="font-semibold flex flex-col items-center">
-										<div>{tier.name}</div>
-										<Timer endTime={tier.end} />
-									</div>
+								<div className="card max-w-md bg-base-100 shadow-xl" key={tier.id}>
+									<div className="card-body">
+										<h2 className="card-title text-2xl">{tier.name}</h2>
+										<div className="w-32">
+											<Timer className="px-1 text-sm" endTime={tier?.end} />
+										</div>
 
-									<div className="flex items-center gap-6">
-										<div className="text-secondary">${tier.price}</div>
-										<div className="flex items-center gap-3">
-											<img
-												src="/minus.svg"
-												alt=""
-												className="w-7 h-7 cursor-pointer"
-												onClick={() => setTicketQuantity(quantity - 1, UpOrDown.Desc, tier)}
-											/>
-											<div className="w-8 text-center">
-												{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
+										<div className="card-actions justify-end">
+											<div className="text-secondary text-lg font-semibold">${tier.price}</div>
+											<div className="flex items-center gap-1">
+												<img
+													src="/minus.svg"
+													alt=""
+													className="w-6 h-6 cursor-pointer"
+													onClick={() => setTicketQuantity(quantity - 1, UpOrDown.Desc, tier)}
+												/>
+												<div className="w-8 text-center">
+													{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
+												</div>
+												<img
+													src="/plus.svg"
+													alt=""
+													className="w-6 h-6 cursor-pointer"
+													onClick={() => setTicketQuantity(quantity + 1, UpOrDown.Asc, tier)}
+												/>
 											</div>
-											<img
-												src="/plus.svg"
-												alt=""
-												className="w-7 h-7 cursor-pointer"
-												onClick={() => setTicketQuantity(quantity + 1, UpOrDown.Asc, tier)}
-											/>
 										</div>
 									</div>
 								</div>

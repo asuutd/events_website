@@ -1,29 +1,19 @@
-import { Dialog, Transition } from '@headlessui/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { rm } from 'fs';
-import { NextPage } from 'next/types';
-import React, { Fragment, useEffect, useState } from 'react';
-import Modal from '../components/Modal';
-import { trpc } from '../utils/trpc';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useEffect } from 'react';
 
-const Test: NextPage = () => {
-	const makeCodes = trpc.code.createCode.useMutation();
+export default function Test() {
 	return (
-		<button
-			className="btn btn-primary"
-			onClick={() =>
-				makeCodes.mutate({
-					type: 'flat',
-					num_codes: 12,
-					limit: 1,
-					value: 5,
-					tierId: 'clep16dks0002uh5kjo2xqq6r'
-				})
-			}
-		>
-			CLICK
-		</button>
+		<>
+			<label htmlFor="party">Enter a date and time for your party booking:</label>
+			<input
+				id="party"
+				type="datetime-local"
+				name="partydate"
+				value="2017-06-01T08:30"
+				onChange={(e) => console.log(e.target.value)}
+			/>
+		</>
 	);
-};
-
-export default Test;
+}

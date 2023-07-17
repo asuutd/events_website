@@ -58,7 +58,14 @@ model User {
   tickets       Ticket[]
   RefCode       RefCode[]
   EventAdmin    EventAdmin[]
-  Events        Event[]
+  Organizer     Organizer?
+}
+
+model Organizer {
+  id              String  @id @default(cuid())
+  stripeAccountId String?
+  user            User    @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  events        Event[]
 }
 
 model VerificationToken {
@@ -82,7 +89,7 @@ model Event {
   Tier         Tier[]
   EventAdmin   EventAdmin[]
   organizerId  String?
-  organizer    User?        @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  organizer    Organizer?        @relation(fields: [organizerId], references: [id], onDelete: Cascade)
 }
 
 model EventAdmin {
@@ -119,7 +126,6 @@ model Code {
   limit   Int
   tier    Tier     @relation(fields: [tierId], references: [id], onDelete: Cascade)
   tickets Ticket[]
-  
 
   @@unique([code, tierId])
 }

@@ -34,7 +34,7 @@ const Navbar = () => {
 		signOut({ redirect: true, callbackUrl: window.location.href });
 	};
 	return (
-		<div className="navbar bg-repeat bg-main-img">
+		<div className="navbar">
 			<div className="flex-1">
 				<Link className="btn btn-ghost normal-case text-xl" href="/">
 					<a className="flex items-center gap-1 text-base-100 font-bold">
@@ -106,7 +106,7 @@ const Navbar = () => {
 						</label>
 					) : (
 						<>
-							<label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+							<label tabIndex={14} className="btn btn-ghost btn-circle avatar">
 								<div className="w-10 rounded-full">
 									<Image
 										src={session?.user?.image || '/Missing_avatar.svg'}
@@ -118,11 +118,28 @@ const Navbar = () => {
 								</div>
 							</label>
 							<ul
-								tabIndex={0}
-								className="menu menu-compact dropdown-content mt-3 p-2 shadow-lg bg-base-100 rounded-box w-52"
+								tabIndex={14}
+								className="menu menu-compact justify-end dropdown-content z-[6] mt-3 p-2 shadow-lg bg-base-100 rounded-box w-64"
 							>
 								<li>
 									<Link href="/tickets">Tickets</Link>
+								</li>
+								<li>
+									{session?.user?.role === 'ORGANIZER' ? (
+										<Link href="/organizer/events">
+											<div className="justify-between gap-0">
+												Your Events
+												<span className="badge badge-success">New</span>
+											</div>
+										</Link>
+									) : (
+										<Link href="/register">
+											<div className="justify-between gap-0">
+												Organise an event
+												<span className="badge badge-success">New</span>
+											</div>
+										</Link>
+									)}
 								</li>
 
 								<li>

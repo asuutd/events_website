@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { TimerContainer } from '../Timer/TimerContainer';
 
-const Timer = ({ endTime }: { endTime: Date }) => {
+const Timer = ({ endTime, className }: { endTime: Date; className?: string }) => {
 	const [time, _] = useState<number>(endTime.getTime() - Date.now());
 	const [days, setDays] = useState<number>(0);
 	const [hours, setHours] = useState<number>(0);
@@ -51,6 +51,7 @@ const Timer = ({ endTime }: { endTime: Date }) => {
 			hours={hours}
 			minutes={minutes}
 			seconds={seconds}
+			className={className}
 			urgent={endTime.getTime() - new Date().getTime() < 86400000}
 		/>
 	);

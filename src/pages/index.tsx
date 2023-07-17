@@ -1,7 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-
+import MobileCarousel from '../components/MobileCarousel';
+import TypeWriter from 'typewriter-effect';
 const Home: NextPage = () => {
 	return (
 		<>
@@ -11,15 +12,21 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className="py-2 ">
-				<div className="hero h-[60vh] sm:h-[75vh] lg:h-screen bg-hero-sm md:bg-hero-lg rounded-md">
-					<div className="hero-overlay bg-black bg-opacity-60 rounded-md"></div>
-					<div className="hero-content text-center text-neutral-content">
-						<div className="max-w-md">
-							<Link href="/events/clep15dtk0000uh5kq4hy07ud">
-								<a className="btn btn-primary btn-lg">GET TICKETS</a>
-							</Link>
-						</div>
-					</div>
+				<MobileCarousel />
+				<div>
+					<h1 className="text-3xl ">
+						Events{' '}
+						<span className="text-primary font-semibold">
+							<TypeWriter
+								options={{
+									strings: ['around your campus.', 'from your orgs.', 'run by you?'],
+									autoStart: true,
+									loop: true,
+									delay: 100
+								}}
+							/>
+						</span>
+					</h1>
 				</div>
 			</main>
 		</>
