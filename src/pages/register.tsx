@@ -29,7 +29,7 @@ const register = () => {
 						<span className="text-xl lg:text-3xl">and make your event the best it can be</span>
 					</h1>
 					<p className="text-sm">
-						You already have a lot on your plate trying to plan your events. Don't let absurd
+						You already have a lot on your plate trying to plan your events. Don&apos;t let absurd
 						ticketing fees stop you from giving the best experience to your attendees
 					</p>
 					<button className="btn btn-primary" onClick={() => handleClick()}>
