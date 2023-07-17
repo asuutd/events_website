@@ -17,7 +17,7 @@ export default defineNextConfig({
 	reactStrictMode: true,
 	swcMinify: true,
 	images: {
-		domains: ['lh3.googleusercontent.com', 'pbs.twimg.com', 'ucarecdn.com']
+		domains: ['lh3.googleusercontent.com', 'pbs.twimg.com', 'ucarecdn.com', 'fastly.picsum.photos']
 	},
 	// Next.js i18n docs: https://nextjs.org/docs/advanced-features/i18n-routing
 	i18n: {

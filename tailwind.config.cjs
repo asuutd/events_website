@@ -15,6 +15,7 @@ module.exports = {
 	},
 	daisyui: {
 		themes: [
+			'autumn',
 			{
 				mytheme: {
 					primary: '#E89700',

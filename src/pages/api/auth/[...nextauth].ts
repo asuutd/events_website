@@ -10,10 +10,21 @@ import { env } from '../../../env/server.mjs';
 export const authOptions: NextAuthOptions = {
 	// Include user.id on session
 	callbacks: {
-		session({ session, user }) {
+		async session({ session, user }) {
+			console.log(user);
 			if (session.user) {
 				session.user.id = user.id;
+				const organizer = await prisma.organizer.findFirst({
+					where: {
+						id: user.id
+					}
+				});
+
+				if (organizer) {
+					session.user.role = 'ORGANIZER';
+				}
 			}
+
 			return session;
 		}
 	},

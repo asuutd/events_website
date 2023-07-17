@@ -7,9 +7,10 @@ interface timeProps {
 	minutes: number | string;
 	seconds: number | string;
 	urgent: boolean;
+	className?: string;
 }
 
-export const TimerContainer = ({ days, hours, minutes, seconds, urgent }: timeProps) => {
+export const TimerContainer = ({ days, hours, minutes, seconds, urgent, className }: timeProps) => {
 	let daysFlip = false;
 	let hoursFlip = false;
 	let minutesFlip = false;
@@ -68,7 +69,9 @@ export const TimerContainer = ({ days, hours, minutes, seconds, urgent }: timePr
 
 	return (
 		<div className="rounded-xl  ">
-			<div className=" gap-4 rounded-xl py-2 px-6 mt-2 flex items-center  justify-between ">
+			<div
+				className={`gap-4 rounded-xl py-2 px-6 mt-2 flex items-center  justify-between ${className}`}
+			>
 				<NumberBox num={days} unit="Days" flip={daysFlip} urgent />
 				<span className="  text-3xl font-normal  inline-block  ">:</span>
 				<NumberBox num={hours} unit="Hours" flip={hoursFlip} urgent />
