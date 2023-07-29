@@ -9,7 +9,3 @@
 		font-family: Poppins, system-ui, sans-serif;
 	}
 }
-
-.react-datepicker-popper {
-	z-index: 9999 !important;
-}

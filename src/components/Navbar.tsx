@@ -48,10 +48,10 @@ const Navbar = () => {
 					{status === 'unauthenticated' ? (
 						<>
 							<div className="dropdown dropdown-end">
-								<label tabIndex={0} className="btn m-1 btn-primary uppercase">
+								<label tabIndex={14} className="btn m-1 btn-primary uppercase">
 									Sign In
 								</label>
-								<ul tabIndex={0} className="dropdown-content menu rounded-box w-52">
+								<ul tabIndex={14} className="dropdown-content menu rounded-box w-52 z-[10]">
 									{providers &&
 										Object.values(providers)
 											.filter((provider) => provider.name != 'Credentials')
@@ -119,7 +119,7 @@ const Navbar = () => {
 							</label>
 							<ul
 								tabIndex={14}
-								className="menu menu-compact justify-end dropdown-content z-[6] mt-3 p-2 shadow-lg bg-base-100 rounded-box w-64"
+								className="menu gap-5  justify-end dropdown-content z-[10] mt-3 p-6 shadow-lg bg-base-100 rounded-box w-64"
 							>
 								<li>
 									<Link href="/tickets">Tickets</Link>

@@ -1,12 +1,14 @@
 // src/server/router/context.ts
-import * as trpc from "@trpc/server";
-import * as trpcNext from "@trpc/server/adapters/next";
-import { Session } from "next-auth";
-import { getServerAuthSession } from "../common/get-server-auth-session";
-import { prisma } from "../db/client";
+import * as trpc from '@trpc/server';
+import * as trpcNext from '@trpc/server/adapters/next';
+import { Session } from 'next-auth';
+import { getServerAuthSession } from '../common/get-server-auth-session';
+import { prisma } from '../db/client';
+import { IncomingHttpHeaders } from 'http';
 
 type CreateContextOptions = {
-  session: Session | null;
+	session: Session | null;
+	headers: IncomingHttpHeaders;
 };
 
 /** Use this helper for:
@@ -14,27 +16,28 @@ type CreateContextOptions = {
  * - trpc's `createSSGHelpers` where we don't have req/res
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
-  return {
-    session: opts.session,
-    prisma,
-  };
+	return {
+		session: opts.session,
+		prisma,
+		headers: opts.headers
+	};
 };
 
 /**
  * This is the actual context you'll use in your router
  * @link https://trpc.io/docs/context
  **/
-export const createContext = async (
-  opts: trpcNext.CreateNextContextOptions,
-) => {
-  const { req, res } = opts;
+export const createContext = async (opts: trpcNext.CreateNextContextOptions) => {
+	const { req, res } = opts;
+	const headers = req.headers;
 
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
+	// Get the session from the server using the unstable_getServerSession wrapper function
+	const session = await getServerAuthSession({ req, res });
 
-  return await createContextInner({
-    session,
-  });
+	return await createContextInner({
+		session,
+		headers: headers
+	});
 };
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;

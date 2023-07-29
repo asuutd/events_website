@@ -14,6 +14,7 @@ export const organizerRouter = t.router({
 				user: true
 			}
 		});
+		console.log(organizer)
 		let accountId: string;
 		if (organizer?.stripeAccountId) {
 			accountId = organizer.stripeAccountId;
@@ -32,12 +33,15 @@ export const organizerRouter = t.router({
 				}
 			});
 			accountId = account.id;
-			await ctx.prisma.organizer.create({
-				data: {
-					id: ctx.session.user.id,
-					stripeAccountId: account.id
-				}
-			});
+			if(!organizer){
+				await ctx.prisma.organizer.create({
+					data: {
+						id: ctx.session.user.id,
+						stripeAccountId: account.id
+					}
+				});
+			}
+			
 		}
 
 		//Set users role to seller and create onboarding link for stripe account
@@ -63,7 +67,14 @@ export const organizerRouter = t.router({
 
 		return ctx.prisma.event.findMany({
 			where: {
-				organizerId: ctx.session.user.id
+				OR: [
+					{ organizerId: ctx.session.user.id },
+					{
+						EventAdmin: {
+							some: {}
+						}
+					}
+				]
 			},
 			include: {
 				_count: {

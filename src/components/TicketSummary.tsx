@@ -21,6 +21,7 @@ const TicketSummary = ({
 	isOpen: boolean;
 	refCodeQuery: string | undefined;
 }) => {
+	const checkoutQuery = trpc.payment.createCheckoutLink.useMutation();
 	const codeQuery = trpc.code.getCode.useMutation({
 		onSuccess: (data) => {
 			if (data) {
@@ -32,17 +33,18 @@ const TicketSummary = ({
 					} else {
 						if (ticket.amount === data?.tier.price && data.limit > data._count.tickets) {
 							if (data.type === 'percent') {
+								console.log(data.value);
 								ticket.amount = (1 - data.value) * ticket.amount;
 							} else if (data.type === 'flat') {
 								ticket.amount = ticket.amount - data.value;
 							}
 
-							console.log(ticket.amount);
+							console.log(Number(ticket.amount.toFixed(2)));
 							let val = 0;
 							for (const ticket of tickets) {
 								val += ticket.amount * ticket.quantity;
 							}
-							setTotal(val);
+							setTotal(Number(val.toFixed(2)));
 						}
 					}
 				}
@@ -61,9 +63,8 @@ const TicketSummary = ({
 			tiers.push(newTicket);
 		}
 		setStripeLoading(true);
-		const response = await fetch('/api/payment/checkout_session', {
-			method: 'POST',
-			body: JSON.stringify({
+		checkoutQuery.mutate(
+			{
 				eventId,
 				tiers,
 				...(code !== ''
@@ -76,20 +77,17 @@ const TicketSummary = ({
 							refCodeId: refCode
 					  }
 					: {})
-			}),
-			headers: {
-				'Content-Type': 'application/json'
+			},
+			{
+				onSuccess: ({ url }) => {
+					window.open(url, '_self');
+					setStripeLoading(false);
+				},
+				onError: () => {
+					setStripeLoading(false);
+				}
 			}
-		});
-
-		if (response.ok) {
-			const result = await response.text();
-
-			window.open(result, '_self');
-			setStripeLoading(false);
-		} else {
-			setStripeLoading(false);
-		}
+		);
 	};
 
 	const [total, setTotal] = useState<number>(0);
@@ -177,7 +175,7 @@ const TicketSummary = ({
 										</path>
 									</svg>
 								) : (
-									<div className="text-lg font-medium ">${ticket.amount}</div>
+									<div className="text-lg font-medium ">${Number(ticket.amount.toFixed(2))}</div>
 								)}
 
 								<div>{ticket.quantity}</div>
@@ -216,7 +214,7 @@ const TicketSummary = ({
  */}
 
 				<div className="flex justify-end items-center">
-					<span className="text-primary text-lg mr-3">Total:</span>${total}
+					<span className="text-primary text-lg mr-3">Total:</span>${Number(total.toFixed(2))}
 				</div>
 				<div className="mt-4 ">
 					<button

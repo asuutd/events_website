@@ -21,7 +21,7 @@ const register = () => {
 		});
 	};
 	return (
-		<div className="hero min-h-screen bg-base-200 rounded-md">
+		<div className="hero min-h-screen bg-gradient-radial from-accent to-base-100  rounded-md">
 			<div className="hero-content text-center">
 				<div className="max-w-md">
 					<h1 className="text-3xl lg:text-5xl font-bold">

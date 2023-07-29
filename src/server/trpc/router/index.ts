@@ -7,6 +7,7 @@ import { codeRouter } from './code';
 import { tierRouter } from './tier';
 import { eventRouter } from './event';
 import { organizerRouter } from './organizer';
+import { paymentRouter } from './payment';
 
 export const appRouter = t.router({
 	example: exampleRouter,
@@ -15,7 +16,8 @@ export const appRouter = t.router({
 	code: codeRouter,
 	tier: tierRouter,
 	event: eventRouter,
-	organizer: organizerRouter
+	organizer: organizerRouter,
+	payment: paymentRouter
 });
 
 // export type definition of API

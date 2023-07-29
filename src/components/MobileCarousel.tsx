@@ -28,15 +28,6 @@ const data = [
 		css: 'linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 100%)',
 		height: 300,
 		image: 'https://ucarecdn.com/39567007-8c47-4d19-a39c-a8ecc39aecfc/'
-	},
-	{
-		id: 3,
-		name: 'Deep Blue',
-		description: '#e0c3fc → #8ec5fc',
-		css: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-		height: 300,
-		image:
-			'https://fastly.picsum.photos/id/661/1600/900.jpg?hmac=doAkHvSWIUQnbWoU3n0n0OuOuLq-yTswhaMQ0QpC0mc'
 	}
 ];
 
@@ -70,7 +61,7 @@ const MobileCarousel: React.FC = () => {
 
 	return (
 		<div
-			className="relative mt-[200px] max-w-full flex w-[65vw] lg:w-[50vw] mx-auto"
+			className="relative mt-[200px] max-w-full flex w-[65vw] md:w-[50vw] mx-auto"
 			style={{ height }}
 		>
 			{transitions((style, item, t, index) => (

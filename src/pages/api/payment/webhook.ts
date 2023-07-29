@@ -32,10 +32,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		}
 		try {
 			switch (event.type) {
-				case 'checkout.session.completed':
-					const checkoutSessionData = event.data.object as any;
-					const metadata = checkoutSessionData.metadata;
-					const tiers = JSON.parse(metadata.tiers);
+				case 'payment_intent.succeeded':
+					console.log('HERE');
+					const paymentIntentData = event.data.object as Stripe.PaymentIntent;
+					const metadata = paymentIntentData.metadata;
+					const tiers = JSON.parse(metadata.tiers ?? "{}");
 					const dataArray: Prisma.TicketCreateManyInput[] = [];
 					let refCodeId: number | null = null;
 
@@ -67,23 +68,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 					for (const tier of tiers) {
 						for (let i = 0; i < tier.quantity; ++i) {
-							const ticket = {
-								userId: userId,
-								eventId: metadata.eventId,
-								tierId: tier.tierId,
-								paymentIntent: checkoutSessionData.payment_intent,
-								...(code //Make sure to change this. Code should be serched before creating ticket
-									? {
-											codeId: code.id
-									  }
-									: {}),
-								...(refCodeId && !sameOwner
-									? {
-											refCodeId: refCodeId
-									  }
-									: {})
-							};
-							dataArray.push(ticket);
+							if(metadata.eventId && userId){
+								const ticket = {
+									userId: userId,
+									eventId: metadata.eventId,
+									tierId: tier.tierId,
+									paymentIntent: paymentIntentData.id,
+									...(code //Make sure to change this. Code should be serched before creating ticket
+										? {
+												codeId: code.id
+										  }
+										: {}),
+									...(refCodeId && !sameOwner
+										? {
+												refCodeId: refCodeId
+										  }
+										: {})
+								};
+								dataArray.push(ticket);
+							}
+							
 						}
 					}
 					console.log(dataArray);
