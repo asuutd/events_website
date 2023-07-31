@@ -9,7 +9,8 @@ module.exports = {
 			backgroundImage: {
 				'hero-lg': "url('/BGImages/big.jpeg')",
 				'hero-sm': "url('/BGImages/small.jpg')",
-				'main-img': "url('/BGImages/bg.webp')"
+				'main-img': "url('/BGImages/bg.webp')",
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'
 			}
 		}
 	},

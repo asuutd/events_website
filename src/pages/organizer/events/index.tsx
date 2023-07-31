@@ -4,11 +4,12 @@ import Head from 'next/head';
 import Image from 'next/future/image';
 import { NextPage } from 'next/types';
 import React, { useState } from 'react';
-import Modal from '../../components/Modal';
-import TicketDetails from '../../components/TicketDetails';
-import { trpc } from '../../utils/trpc';
-import Tilt from '../../components/Tilt';
-import EventForm from '../../components/EventForm';
+import Modal from '../../../components/Modal';
+import TicketDetails from '../../../components/TicketDetails';
+import { trpc } from '../../../utils/trpc';
+import Tilt from '../../../components/Tilt';
+import EventForm from '../../../components/EventForm';
+import Link from 'next/link';
 
 function classNames(...classes: string[]) {
 	return classes.filter(Boolean).join(' ');
@@ -52,6 +53,14 @@ const Events: NextPage = () => {
 			}
 		}
 	});
+	const paymentLink = trpc.payment.createStripeAccountLink.useMutation();
+	const handlePaymentClick = () => {
+		paymentLink.mutate(undefined, {
+			onSuccess: (data) => {
+				window.open(data.url, '_self');
+			}
+		});
+	};
 
 	return (
 		<>
@@ -61,9 +70,14 @@ const Events: NextPage = () => {
 			<div className="flex flex-col w-full gap-y-5 px-2 py-16 sm:px-0 mx-auto">
 				<div className="justify-between flex items-center">
 					<h1 className="text-4xl font-bold">Events</h1>
-					<button className="btn btn-primary btn-sm" onClick={() => setIsOpen(true)}>
-						+ New
-					</button>
+					<div className="join">
+						<button className="btn  btn-sm join-item" onClick={() => handlePaymentClick()}>
+							Payments
+						</button>
+						<button className="btn btn-primary btn-sm join-item" onClick={() => setIsOpen(true)}>
+							+ New
+						</button>
+					</div>
 				</div>
 
 				{events.isLoading && <p>Loading...</p>}
@@ -153,7 +167,7 @@ export default Events;
 
 const EventCard = ({ event }: { event: ReturnedEvent }) => {
 	return (
-		<div className="card card-side bg-base-100 shadow-xl">
+		<div className="card card-side bg-base-100 shadow-xl max-w-md my-4">
 			<figure className="rounded-lg">
 				{event.ticketImage ? (
 					<Image src={event.ticketImage} alt="Movie" height={400} width={300} />
@@ -168,7 +182,9 @@ const EventCard = ({ event }: { event: ReturnedEvent }) => {
 					<span className="font-semibold">{event._count.tickets}</span> tickets sold.
 				</h2>
 				<div className="card-actions justify-end">
-					<button className="btn btn-primary btn-sm">Details</button>
+					<Link href={`/organizer/events/${event.id}`}>
+						<a className="btn btn-primary btn-sm"> Details</a>
+					</Link>
 				</div>
 			</div>
 		</div>

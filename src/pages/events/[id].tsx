@@ -16,6 +16,8 @@ import { prisma } from '../../server/db/client';
 import isbot from 'isbot';
 import { NextSeo } from 'next-seo';
 import { env } from '../../env/client.mjs';
+import Image from 'next/image';
+import Display from '@/components/Map/Display';
 
 type Ticket = {
 	tier: Tier;
@@ -46,6 +48,7 @@ const Event: NextPage<{
 	const [quantity, setQuantity] = useState(0);
 
 	const [tickets, setTickets] = useState<Ticket[]>([]);
+	const [mapsOpen, setMapsOpen] = useState(false);
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -147,31 +150,51 @@ const Event: NextPage<{
 				<div className="flex flex-col justify-center mx-auto max-w-3xl">
 					<div className="">
 						{event.data?.image ? (
-							<img
+							<Image
 								src={event.data.image}
 								alt=""
-								className="w-auto rounded-md object-fill mx-auto"
+								className="w-auto rounded-md object-cover mx-auto"
+								width={1600}
+								height={900}
 							/>
 						) : (
 							<img
 								src="/placeholder.svg"
 								alt=""
-								className="w-full h-auto lg:h-96 rounded-md object-fill mx-auto bg-gray-200"
+								className="w-full h-auto lg:h-96 rounded-md object-cover mx-auto bg-gray-200"
 							/>
 						)}
 					</div>
 					<div className="">
 						<h2 className="text-4xl text-primary font-bold  my-6">Event</h2>
 						{event.isFetched ? (
-							<h3 className="uppercase text-4xl sm:text-5xl font-semibold  my-6">
-								{event.data?.name}
-							</h3>
+							<>
+								<h3 className="uppercase text-4xl sm:text-5xl font-semibold  my-6">
+									{event.data?.name}
+								</h3>
+								<div className="flex items-center gap-2">
+									By
+									<div className="flex items-center h-6">
+										<div className="h-6 w-6">
+											<Image
+												src={event.data?.organizer?.user.image ?? ''}
+												alt=""
+												width={200}
+												height={200}
+												className="object-contain"
+											/>
+										</div>
+
+										{event.data?.organizer?.user.name}
+									</div>
+								</div>
+							</>
 						) : (
 							<h3 className="h-12 w-72 bg-base-200 animate-pulse rounded-md my-6"></h3>
 						)}
 
 						<div className="my-6  ">
-							<div className="flex mb-2 gap-3">
+							<div className="flex mb-2 gap-3 collapse items-center">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="24"
@@ -181,8 +204,21 @@ const Event: NextPage<{
 								>
 									<path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z" />
 								</svg>
-								Galaxy Rooms
+								{event.data?.location?.name ?? 'No Location'}
+								<button
+									className="btn btn-ghost btn-sm"
+									onClick={() => setMapsOpen((mapsOpen) => !mapsOpen)}
+								>
+									{mapsOpen ? 'Hide' : 'Show'}
+								</button>
 							</div>
+
+							{event.data?.location?.name && (
+								<div className={`mb-2 ${mapsOpen ? '' : 'hidden'}`}>
+									<Display address={event.data?.location?.name ?? ''} />
+								</div>
+							)}
+
 							<div className="mt-2 flex gap-3 items-center">
 								<img src="/clock.svg" alt="" className="w-5 h-5 " />
 								<div className="flex flex-col">
@@ -212,7 +248,7 @@ const Event: NextPage<{
 
 						{event.data ? (
 							event.data.Tier.map((tier) => (
-								<div className="card max-w-md bg-base-100 shadow-xl" key={tier.id}>
+								<div className="card max-w-md bg-base-100 shadow-xl my-4" key={tier.id}>
 									<div className="card-body">
 										<h2 className="card-title text-2xl">{tier.name}</h2>
 										<div className="w-32">
@@ -312,7 +348,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (isbot(context.req.headers['user-agent'])) {
 		const client = appRouter.createCaller({
 			session: await getServerAuthSession(context),
-			prisma: prisma
+			prisma: prisma,
+			headers: context.req.headers
 		});
 		const data = await client.event.getEvent({
 			eventId: id

@@ -28,15 +28,6 @@ const data = [
 		css: 'linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 100%)',
 		height: 300,
 		image: 'https://ucarecdn.com/39567007-8c47-4d19-a39c-a8ecc39aecfc/'
-	},
-	{
-		id: 3,
-		name: 'Deep Blue',
-		description: '#e0c3fc → #8ec5fc',
-		css: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-		height: 300,
-		image:
-			'https://fastly.picsum.photos/id/661/1600/900.jpg?hmac=doAkHvSWIUQnbWoU3n0n0OuOuLq-yTswhaMQ0QpC0mc'
 	}
 ];
 
@@ -67,15 +58,15 @@ const MobileCarousel: React.FC = () => {
 			update: ({ y, height, index }) => ({ y, height, scale: getScale(rows, index) })
 		}
 	);
+	useEffect(() => {
+		console.log(height);
+	}, [height]);
 
 	return (
-		<div
-			className="relative mt-[200px] max-w-full flex w-[65vw] lg:w-[50vw] mx-auto"
-			style={{ height }}
-		>
+		<div className="relative mt-[200px] max-w-full flex w-[60vw] md:w-[30vw] 2xl:w-96 mx-auto">
 			{transitions((style, item, t, index) => (
 				<animated.div
-					className="absolute will-change-[transform, height, opacity] mx-auto my-auto  bottom-3 top-[250px]"
+					className="absolute will-change-[transform, height, opacity] mx-auto my-auto  bottom-3 top-[250px] "
 					style={{ zIndex: data.length - index, ...style }}
 				>
 					<div className="relative bg-cover overflow-hidden  flex max-w-lg items-center justify-center">
