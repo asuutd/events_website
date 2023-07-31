@@ -11,6 +11,8 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BuiltInProviderType } from 'next-auth/providers';
+import Dropdown from './Dropdowns/Dropdown';
+import LoginDropDown from './Dropdowns/Login';
 
 const Navbar = () => {
 	const [providers, setProviders] = useState<Record<
@@ -37,67 +39,13 @@ const Navbar = () => {
 		<div className="navbar">
 			<div className="flex-1">
 				<Link className="btn btn-ghost normal-case text-xl" href="/">
-					<a className="flex items-center gap-1 text-base-100 font-bold">
-						<img src="/pic_4.png" alt="ASU" className="h-10 w-10" />
-						Events
-					</a>
+					<a className="flex items-center gap-1  font-bold text-2xl">Kazala</a>
 				</Link>
 			</div>
 			<div className="flex-none gap-2">
-				<div className="dropdown dropdown-end">
+				<div>
 					{status === 'unauthenticated' ? (
-						<>
-							<div className="dropdown dropdown-end">
-								<label tabIndex={14} className="btn m-1 btn-primary uppercase">
-									Sign In
-								</label>
-								<ul tabIndex={14} className="dropdown-content menu rounded-box w-52 z-[10]">
-									{providers &&
-										Object.values(providers)
-											.filter((provider) => provider.name != 'Credentials')
-											.map((provider) => (
-												<li key={provider.name} className=" justify-center">
-													<button
-														className={` shadow-md w-auto rounded-md gap-1  content-between px-2 py-3 my-2 justify-start bg-base-100 text-black`}
-														onClick={() =>
-															signIn(provider.id, { callbackUrl: window.location.href })
-														}
-													>
-														<img
-															src={`/OAuthProviderIcons/${provider.name}.svg`}
-															alt="Discord"
-															className="h-6 w-6"
-														/>
-														Sign in with {provider.name}
-													</button>
-												</li>
-											))}
-								</ul>
-							</div>
-							{/* <ul
-								tabIndex={0}
-								className="menu menu-compact dropdown-content mt-3 p-2 shadow-lg bg-base-100 rounded-box w-52"
-							>
-								{providers &&
-									providers !== undefined &&
-									Object.values(providers).map((provider) => (
-										<div key={provider.name} className="justify-center flex">
-											<button
-												className={`rounded-md content-center px-2 py-3 my-2 ${
-													provider.id === 'facebook'
-														? 'bg-[#1778F2] text-white'
-														: 'bg-slate-200 text-black'
-												}`}
-												onClick={() =>
-													signIn(provider.id, { callbackUrl: 'http://localhost:3000' })
-												}
-											>
-												Sign in with {provider.name}
-											</button>
-										</div>
-									))}
-							</ul> */}
-						</>
+						<LoginDropDown />
 					) : status === 'loading' ? (
 						<label tabIndex={0} className="btn btn-ghost btn-circle avatar">
 							<div className="w-10 rounded-full">
@@ -106,46 +54,7 @@ const Navbar = () => {
 						</label>
 					) : (
 						<>
-							<label tabIndex={14} className="btn btn-ghost btn-circle avatar">
-								<div className="w-10 rounded-full">
-									<Image
-										src={session?.user?.image || '/Missing_avatar.svg'}
-										layout="intrinsic"
-										className="w-10 rounded-full"
-										width="100"
-										height="100"
-									/>
-								</div>
-							</label>
-							<ul
-								tabIndex={14}
-								className="menu gap-5  justify-end dropdown-content z-[10] mt-3 p-6 shadow-lg bg-base-100 rounded-box w-64"
-							>
-								<li>
-									<Link href="/tickets">Tickets</Link>
-								</li>
-								<li>
-									{session?.user?.role === 'ORGANIZER' ? (
-										<Link href="/organizer/events">
-											<div className="justify-between gap-0">
-												Your Events
-												<span className="badge badge-success">New</span>
-											</div>
-										</Link>
-									) : (
-										<Link href="/register">
-											<div className="justify-between gap-0">
-												Organise an event
-												<span className="badge badge-success">New</span>
-											</div>
-										</Link>
-									)}
-								</li>
-
-								<li>
-									<a onClick={(e) => handleLogout(e)}>Logout</a>
-								</li>
-							</ul>
+							<Dropdown />
 						</>
 					)}
 				</div>

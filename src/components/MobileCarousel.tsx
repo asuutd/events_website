@@ -58,15 +58,15 @@ const MobileCarousel: React.FC = () => {
 			update: ({ y, height, index }) => ({ y, height, scale: getScale(rows, index) })
 		}
 	);
+	useEffect(() => {
+		console.log(height);
+	}, [height]);
 
 	return (
-		<div
-			className="relative mt-[200px] max-w-full flex w-[65vw] md:w-[50vw] mx-auto"
-			style={{ height }}
-		>
+		<div className="relative mt-[200px] max-w-full flex w-[60vw] md:w-[30vw] 2xl:w-96 mx-auto">
 			{transitions((style, item, t, index) => (
 				<animated.div
-					className="absolute will-change-[transform, height, opacity] mx-auto my-auto  bottom-3 top-[250px]"
+					className="absolute will-change-[transform, height, opacity] mx-auto my-auto  bottom-3 top-[250px] "
 					style={{ zIndex: data.length - index, ...style }}
 				>
 					<div className="relative bg-cover overflow-hidden  flex max-w-lg items-center justify-center">

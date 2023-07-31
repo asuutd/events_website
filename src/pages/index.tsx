@@ -10,39 +10,35 @@ const Home: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>ASU Events</title>
+				<title>Kazala</title>
 				<meta name="description" content="Pay for special events that ASU hosts" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className="py-2 ">
-			<div className="hero min-h-[65vh]">
-  <div className="hero-content flex-col md:flex-row-reverse items-start w-full">
-    <div className="mx-auto">
-	<MobileCarousel />
-    </div>
-    
-	<div className="my-5 ">
-					<h1 className="text-3xl ">
-						Events{' '}
-						<div className="text-primary font-semibold w-96">
-							<TypeWriter
-								options={{
-									strings: ['around your campus.', 'from your orgs.', 'run by you?'],
-									autoStart: true,
-									loop: true,
-									delay: 100,
-									wrapperClassName:
-										' text-3xl my-10 bg-gradient-radial from-[#EEE7E1] to-base-100 rounded-lg w-96'
-								}}
-							/>
+				<div className="hero min-h-[65vh] mx-auto">
+					<div className="hero-content flex-col md:flex-row-reverse items-start w-full">
+						<div className="mx-auto">
+							<MobileCarousel />
 						</div>
-					</h1>
+
+						<div className="my-5 max-w-xs">
+							<h1 className="text-3xl ">
+								Events{' '}
+								<div className="text-primary font-semibold w-96">
+									<TypeWriter
+										options={{
+											strings: ['around your campus.', 'from your orgs.', 'run by you?'],
+											autoStart: true,
+											loop: true,
+											delay: 100,
+											wrapperClassName: ' text-3xl my-10  rounded-lg w-96'
+										}}
+									/>
+								</div>
+							</h1>
+						</div>
+					</div>
 				</div>
-    </div>
-  
-</div>
-				
-				
 
 				<div className="my-5 ">
 					<h2 className="text-3xl">Upcoming Events</h2>
@@ -58,9 +54,9 @@ export default Home;
 const EventCards = () => {
 	const client = trpc.event.getEvents.useQuery();
 	return (
-		<div className='md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-2 lg:gap-6'>
+		<div className="md:grid md:grid-cols-2  md:gap-2 ">
 			{client.data?.map((event) => (
-				<div className="card w-96 bg-base-100 shadow-xl my-4" key={event.id}>
+				<div className="card w-72 sm:w-96 bg-base-100 shadow-xl my-4 mx-auto" key={event.id}>
 					<figure className="px-10 pt-10">
 						<Image
 							src={event.image ?? ''}

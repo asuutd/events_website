@@ -3,11 +3,9 @@ import Image from 'next/future/image';
 import Logo from '../../public/pic_4.png';
 const Footer = () => {
 	return (
-		<footer className="footer p-10 bg-base-100 text-neutral">
+		<footer className="footer p-10  text-neutral">
 			<div>
-				<Image alt="" src={Logo} width={50} height={50} />
-
-				<p className="">UTD ASU Events</p>
+				<p className="text-2xl">Kazala</p>
 			</div>
 			<div>
 				<span className="footer-title ">Social</span>
