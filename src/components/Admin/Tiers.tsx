@@ -23,9 +23,11 @@ const Tiers = ({ eventId }: { eventId: string }) => {
 					+ Add Tier
 				</button>
 			</div>
-			{tiers.data?.map((tier) => (
-				<TierCard tier={tier} key={tier.id} />
-			))}
+			<div className="md:grid md:grid-cols-2 mx-auto">
+				{tiers.data?.map((tier) => (
+					<TierCard tier={tier} key={tier.id} />
+				))}
+			</div>
 
 			<Modal isOpen={isOpen} closeModal={() => setIsOpen(false)}>
 				<TiersForm eventId={eventId} closeModal={() => setIsOpen(false)} />
@@ -77,7 +79,7 @@ const TierCard = ({ tier }: { tier: Tier }) => {
 		);
 	};
 	return (
-		<div className="card w-96 bg-base-100 shadow-xl my-4">
+		<div className="card w-72 md:96 bg-base-100 shadow-xl my-4 mx-auto">
 			<form className="card-body" onSubmit={handleSubmit(onSubmit)}>
 				<input className="input card-title input-ghost ml-0" {...register('name')} />
 				<span>

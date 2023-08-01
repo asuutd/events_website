@@ -117,7 +117,7 @@ const Events: NextPage = () => {
 						<Tab.Panels className="mt-2 w-full">
 							<Tab.Panel
 								className={classNames(
-									'rounded-xl bg-white p-3',
+									'rounded-xl p-3 md:grid md:grid-cols-2 gap-2',
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 								)}
 							>
@@ -127,7 +127,7 @@ const Events: NextPage = () => {
 									</div>
 								) : (
 									upcoming.map((event) => (
-										<div key={event.id}>
+										<div key={event.id} className=" ">
 											<EventCard event={event} />
 										</div>
 									))
@@ -136,7 +136,7 @@ const Events: NextPage = () => {
 
 							<Tab.Panel
 								className={classNames(
-									'rounded-xl bg-white p-3',
+									'rounded-xl  p-3 md:grid md:grid-cols-2 gap-2',
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 								)}
 							>
@@ -167,10 +167,16 @@ export default Events;
 
 const EventCard = ({ event }: { event: ReturnedEvent }) => {
 	return (
-		<div className="card card-side bg-base-100 shadow-xl max-w-md my-4">
+		<div className="card card-side bg-base-100 shadow-xl max-w-md my-4 h-80">
 			<figure className="rounded-lg">
 				{event.ticketImage ? (
-					<Image src={event.ticketImage} alt="Movie" height={400} width={300} />
+					<Image
+						src={event.ticketImage}
+						alt="Movie"
+						height={400}
+						width={300}
+						className="object-contain h-72 w-72 rounded-lg"
+					/>
 				) : (
 					<p className="w-32 h-44 bg-base-200 animate-pulse" />
 				)}

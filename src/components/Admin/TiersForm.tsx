@@ -16,6 +16,7 @@ const TiersForm: React.FC<Props> = ({ eventId, closeModal }) => {
 	const tiers = trpc.tier.getTiers.useQuery({
 		eventId
 	});
+	const utils = trpc.useContext();
 
 	const root = useRef(null);
 	const [startDate, setStartDate] = useState<Date>(new Date());
@@ -40,6 +41,9 @@ const TiersForm: React.FC<Props> = ({ eventId, closeModal }) => {
 	});
 
 	const onSubmit = (fields: FormInput) => {
+		utils.tier.getTiersAdmin.invalidate({
+			eventId
+		});
 		mutation.mutate(
 			{
 				name: fields.name,
