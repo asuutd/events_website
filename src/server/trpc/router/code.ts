@@ -27,6 +27,134 @@ export const codeRouter = t.router({
 
 			return code;
 		}),
+	getCodes: authedProcedure
+		.input(
+			z.object({
+				eventId: z.string()
+			})
+		)
+		.query(async ({ input, ctx }) => {
+			const event = await ctx.prisma.event.findFirst({
+				where: {
+					AND: [
+						{
+							OR: [
+								{ organizerId: ctx.session.user.id },
+								{
+									EventAdmin: {
+										some: {
+											userId: ctx.session.user.id
+										}
+									}
+								}
+							]
+						},
+						{
+							id: input.eventId
+						}
+					]
+				}
+			});
+			console.log(event);
+			if (!event) {
+				throw new TRPCError({
+					code: 'UNAUTHORIZED'
+				});
+			}
+
+			return await ctx.prisma.code.findMany({
+				where: {
+					tier: {
+						eventId: input.eventId
+					}
+				},
+				include: {
+					_count: {
+						select: {
+							tickets: true
+						}
+					},
+					tier: {
+						select: {
+							id: true,
+							name: true
+						}
+					}
+				}
+			});
+		}),
+	getReferralCodesAdmin: authedProcedure
+		.input(
+			z.object({
+				eventId: z.string()
+			})
+		)
+		.query(async ({ input, ctx }) => {
+			const event = await ctx.prisma.event.findFirst({
+				where: {
+					AND: [
+						{
+							OR: [
+								{ organizerId: ctx.session.user.id },
+								{
+									EventAdmin: {
+										some: {
+											userId: ctx.session.user.id
+										}
+									}
+								}
+							]
+						},
+						{
+							id: input.eventId
+						}
+					]
+				}
+			});
+			console.log(event);
+			if (!event) {
+				throw new TRPCError({
+					code: 'UNAUTHORIZED'
+				});
+			}
+			if (!event.ref_quantity || event.ref_quantity === 0) {
+				throw new TRPCError({
+					code: 'PRECONDITION_FAILED'
+				});
+			}
+
+			return await ctx.prisma.refCode.findMany({
+				where: {
+					eventId: input.eventId,
+					tickets: {
+						some: {}
+					}
+				},
+				include: {
+					_count: {
+						select: {
+							tickets: true
+						}
+					},
+					user: {
+						select: {
+							name: true,
+							image: true
+						}
+					},
+					tickets: {
+						select: {
+							user: {
+								select: {
+									name: true,
+									image: true
+								}
+							}
+						}
+					}
+				}
+			});
+		}),
 	createCode: authedProcedure
 		.input(
 			z.object({
@@ -48,7 +176,7 @@ export const codeRouter = t.router({
 				}
 			});
 			if (tier?.event.organizerId === ctx.session.user.id) {
-				if (input.type === 'flat' && input.value < tier.price) {
+				if (input.type === 'flat' && input.value > tier.price) {
 					throw new TRPCError({
 						code: 'BAD_REQUEST',
 						message: 'Discount more than ticket price'

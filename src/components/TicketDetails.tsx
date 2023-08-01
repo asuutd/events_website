@@ -66,7 +66,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 			>
 				<Dialog.Panel
 					ref={root}
-					className="w-[320px] transform overflow-hidden rounded-2xl text-left align-middle shadow-xl transition-all "
+					className="w-[320px] transform overflow-hidden rounded-2xl text-left align-middle shadow-xl transition-all"
 				>
 					<TicketCap rotated={false} />
 					<div className="pt-6 bg-white">
@@ -82,7 +82,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 							<h2 className="text-lg font-bold">{session?.user?.name}</h2>
 							<p className="text-xs">{session?.user?.email}</p>
 
-							<p className="text-4xl font-bold mt-4 mb-2">{ticket.event.name}</p>
+							<p className="text-4xl font-bold mt-4 mb-2 text-center">{ticket.event.name}</p>
 							<p className="text-gray-500 text-xs mb-2">
 								{ticket.event.start.toLocaleDateString()}
 							</p>
@@ -130,7 +130,13 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 								</p>
 								<ul className="text-xs font-mono flex  border border-primary divide-x divide-primary text-primary w-max">
 									<li className="py-1 px-2">${ticket.tier?.price || '0'}</li>
-									<li className="py-1 px-2">{ticket.tier?.name || 'Free Ticket'}</li>
+									<li className="py-1 px-2">
+										{ticket.tier && ticket.paymentIntent
+											? ticket.tier.name
+											: ticket.tier
+											? `${ticket.tier.name}(Cash)`
+											: 'Free Ticket'}
+									</li>
 									<li className="py-1 px-2">{ticket.event.start.toLocaleTimeString()}</li>
 								</ul>
 							</div>
@@ -155,8 +161,8 @@ function TicketCap(props: { rotated: boolean }) {
 			preserveAspectRatio="none"
 		>
 			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
+				fillRule="evenodd"
+				clipRule="evenodd"
 				d="M-2.18557e-06 0L0 50L160 50L320 50L320 -1.39876e-05L210 -9.17939e-06C210 27.6142 187.614 50 160 50C132.386 50 110 27.6142 110 -4.80825e-06L-2.18557e-06 0Z"
 				fill="white"
 			/>

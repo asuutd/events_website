@@ -99,13 +99,14 @@ const Ticket: NextPage = () => {
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 								)}
 							>
-								<div className="flex flex-wrap gap-5 p-5 bg-white">
+								<div className="flex flex-wrap gap-8 bg-white">
 									{upcoming.length > 0 ? (
 										upcoming.map((ticket) => (
 											<TicketCard
 												priority={true}
 												key={ticket.id}
 												ticket={ticket}
+												hide={isOpen}
 												onClick={() => {
 													setSelectedTicket(ticket.id);
 													setIsOpen(true);
@@ -124,13 +125,14 @@ const Ticket: NextPage = () => {
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 								)}
 							>
-								<div className="flex flex-wrap gap-8 bg-white">
+								<div className="flex flex-wrap gap-8 bg-white grayscale-45">
 									{past.length > 0 ? (
 										past.map((ticket) => (
 											<TicketCard
 												priority={false}
 												key={ticket.id}
 												ticket={ticket}
+												hide={isOpen}
 												onClick={() => {
 													setSelectedTicket(ticket.id);
 													setIsOpen(true);
@@ -164,16 +166,24 @@ function TicketCard(props: {
 	ticket: TicketWithEventData;
 	onClick: () => void;
 	priority: boolean;
+	hide?: boolean;
 }) {
-	const { ticket, onClick, priority } = props;
+	const { ticket, onClick, priority, hide = false } = props;
 	return (
 		<Tilt>
 			<div
 				onClick={onClick}
 				key={ticket.id}
-				className="border relative rounded-md bg-white my-3 w-80 hover:scale-110 transition-all text-black shadow-xl hover:shadow-2xl hover:cursor-pointer"
+				className={classNames(
+					'border relative rounded-md bg-white my-3 w-80 hover:scale-110 transition-all text-black shadow-xl hover:shadow-2xl hover:cursor-pointer',
+					hide ? 'opacity-0 invisible' : 'opacity-100'
+				)}
 			>
-				<div className="relative flex flex-col w-full justify-center items-center overflow-hidden text-left">
+				<div
+					className={`relative flex flex-col w-full justify-center items-center overflow-hidden text-left ${
+						priority ? '' : 'grayscale'
+					} `}
+				>
 					<div className="w-full h-[60%] absolute top-0 left-0">
 						<Image
 							src={ticket.event.ticketImage || ''}

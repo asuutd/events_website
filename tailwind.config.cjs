@@ -4,31 +4,38 @@ module.exports = {
 	theme: {
 		extend: {
 			animation: {
-				"slow-spin": "spin 50s linear infinite",
+				'slow-spin': 'spin 50s linear infinite'
+			},
+			backgroundImage: {
+				'hero-lg': "url('/BGImages/big.jpeg')",
+				'hero-sm': "url('/BGImages/small.jpg')",
+				'main-img': "url('/BGImages/bg.webp')",
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'
 			}
 		}
 	},
 	daisyui: {
 		themes: [
+			'autumn',
 			{
 				mytheme: {
-					primary: '#ea77ad',
+					primary: '#E89700',
 
-					secondary: '#24d6ca',
+					secondary: '#455709',
 
-					accent: '#1fe0b6',
+					accent: '#4B140A',
 
-					neutral: '#27192E',
+					neutral: '#21202D',
 
-					'base-100': '#F9F6F9',
+					'base-100': '#EEEFF2',
 
-					info: '#5BADC8',
+					info: '#339EDB',
 
-					success: '#157560',
+					success: '#1D8C65',
 
-					warning: '#A67711',
+					warning: '#F4952F',
 
-					error: '#F5524D'
+					error: '#E65B72'
 				}
 			}
 		]

@@ -2,13 +2,9 @@ import { authedProcedure, t } from '../trpc';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 
-import Stripe from 'stripe';
 import { env } from '../../../env/server.mjs';
 import { TRPCError } from '@trpc/server';
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-	apiVersion: '2022-08-01'
-});
+import stripe from '../../../utils/stripe';
 
 export const ticketRouter = t.router({
 	createTicket: authedProcedure
@@ -153,7 +149,8 @@ export const ticketRouter = t.router({
 	refundTicket: authedProcedure
 		.input(
 			z.object({
-				eventId: z.string()
+				eventId: z.string(),
+				ticketId: z.string().nullish()
 			})
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -193,6 +190,27 @@ export const ticketRouter = t.router({
 					code: 'BAD_REQUEST',
 					message: 'This event does not exist'
 				});
+			}
+			if (userId === event.organizerId && input.ticketId) {
+				const ticket = await ctx.prisma.ticket.findFirst({
+					where: {
+						id: input.ticketId
+					},
+					include: {
+						tier: true
+					}
+				});
+
+				if (ticket?.paymentIntent && ticket?.tier) {
+					await stripe.refunds.create({
+						payment_intent: ticket.paymentIntent,
+						amount: ticket?.tier.price * 100,
+						metadata: {
+							ticketId: ticket.id
+						}
+					});
+				}
+				return;
 			}
 
 			const freeTicket = event.tickets.find((ticket) => ticket.tierId === null);
@@ -246,6 +264,83 @@ export const ticketRouter = t.router({
 		});
 	}),
 
+	getTicketsAdmin: authedProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(100).nullish(),
+				cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+				eventId: z.string()
+			})
+		)
+		.query(async ({ input, ctx }) => {
+			const event = await ctx.prisma.event.findFirst({
+				where: {
+					AND: [
+						{
+							OR: [
+								{ organizerId: ctx.session.user.id },
+								{
+									EventAdmin: {
+										some: {
+											userId: ctx.session.user.id
+										}
+									}
+								}
+							]
+						},
+						{
+							id: input.eventId
+						}
+					]
+				}
+			});
+			console.log(event);
+			if (!event) {
+				throw new TRPCError({
+					code: 'UNAUTHORIZED'
+				});
+			}
+			const limit = input.limit ?? 50;
+			const { cursor } = input;
+			const items = await ctx.prisma.ticket.findMany({
+				take: limit + 1, // get an extra item at the end which we'll use as next cursor
+				where: {
+					eventId: input.eventId
+				},
+				include: {
+					user: {
+						select: {
+							image: true,
+							name: true
+						}
+					},
+					tier: {
+						select: {
+							name: true
+						}
+					},
+					event: {
+						select: {
+							start: true
+						}
+					}
+				},
+				cursor: cursor ? { id: cursor } : undefined,
+				orderBy: {
+					createdAt: 'asc'
+				}
+			});
+			let nextCursor: typeof cursor | undefined = undefined;
+			if (items.length > limit) {
+				const nextItem = items.pop();
+				nextCursor = nextItem!.id;
+			}
+			return {
+				items,
+				nextCursor
+			};
+		}),
+
 	validateTicket: authedProcedure
 		.input(
 			z.object({
@@ -265,6 +360,14 @@ export const ticketRouter = t.router({
 					code: 'UNAUTHORIZED',
 					message: `You are not an admin for this event`
 				});
+			}
+			const ticket = await ctx.prisma.ticket.findFirst({
+				where: {
+					id: input.ticketId
+				}
+			});
+
+			if (ticket?.checkedInAt !== null) {
 			}
 
 			return ctx.prisma.ticket.update({
