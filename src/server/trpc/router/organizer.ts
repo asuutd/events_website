@@ -14,7 +14,7 @@ export const organizerRouter = t.router({
 				user: true
 			}
 		});
-		console.log(organizer)
+		console.log(organizer);
 		let accountId: string;
 		if (organizer?.stripeAccountId) {
 			accountId = organizer.stripeAccountId;
@@ -33,7 +33,7 @@ export const organizerRouter = t.router({
 				}
 			});
 			accountId = account.id;
-			if(!organizer){
+			if (!organizer) {
 				await ctx.prisma.organizer.create({
 					data: {
 						id: ctx.session.user.id,
@@ -41,7 +41,6 @@ export const organizerRouter = t.router({
 					}
 				});
 			}
-			
 		}
 
 		//Set users role to seller and create onboarding link for stripe account
