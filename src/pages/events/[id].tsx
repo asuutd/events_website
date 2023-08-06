@@ -338,18 +338,14 @@ const Event: NextPage<{
 
 export default Event;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	const id =
-		typeof context.query.id === 'string'
-			? context.query.id
-			: context.query.id == undefined
-			? ':)'
-			: context.query.id[0]!;
-	if (isbot(context.req.headers['user-agent'])) {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+	const id = typeof query.id === 'string' ? query.id : query.id == undefined ? ':)' : query.id[0]!;
+	res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+	if (isbot(req.headers['user-agent'])) {
 		const client = appRouter.createCaller({
-			session: await getServerAuthSession(context),
+			session: await getServerAuthSession({ req, res }),
 			prisma: prisma,
-			headers: context.req.headers
+			headers: req.headers
 		});
 		const data = await client.event.getEvent({
 			eventId: id
