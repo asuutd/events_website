@@ -99,7 +99,12 @@ export const eventRouter = t.router({
 										}
 									}
 							  }
-							: {})
+							: {}),
+						EventAdmin: {
+							create: {
+								userId: ctx.session.user.id
+							}
+						}
 					}
 				});
 				return newEvent;
