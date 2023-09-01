@@ -39,7 +39,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 				console.error(err);
 			}
 		};
-		generateQR(`${env.NEXT_PUBLIC_URL}/tickets/validate?id=${ticket.id}`);
+		generateQR(`${env.NEXT_PUBLIC_URL}/tickets/validate?id=${ticket.id}&eventId=${ticket.eventId}`);
 	}, []);
 	const root = useRef(null);
 	useEffect(() => {

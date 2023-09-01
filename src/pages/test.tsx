@@ -17,6 +17,7 @@ import { env } from '@/env/client.mjs';
 import { useAddressAutofillCore } from '@mapbox/search-js-react';
 import { randomUUID } from 'crypto';
 import dynamic from 'next/dynamic';
+import { trpc } from '@/utils/trpc';
 const qrcodeRegionId = 'html5qr-code-full-region';
 
 // Creates the configuration object for Html5QrcodeScanner.
@@ -68,6 +69,7 @@ const Html5QrcodePlugin: React.FC<newType> = (props) => {
 
 export default function Test() {
 	const router = useRouter();
+	const validateMut = trpc.ticket.validateTicket.useMutation();
 	const onNewScanResult = (decodedText: string, decodedResult: Html5QrcodeResult) => {
 		// handle decoded results here
 		router.push(decodedText);
@@ -88,7 +90,15 @@ export default function Test() {
 	}, []);
 
 	const onError = (errorMessage: string, error: Html5QrcodeError) => {
-		console.log(errorMessage);
+		const url = new URL(errorMessage);
+		const ticketId = url.searchParams.get('id');
+		const eventId = url.searchParams.get('eventId');
+		if (ticketId && eventId) {
+			validateMut.mutate({
+				eventId,
+				ticketId
+			});
+		}
 	};
 
 	return (
@@ -102,20 +112,17 @@ export default function Test() {
 				qrCodeErrorCallback={onError}
 			/>
 
-			<div className=" bottom-0  left-0 w-full overflow-hidden leading-0 z-[0] h-[50vh]">
+			{validateMut.isSuccess && (
 				<svg
-					data-name="Layer 1"
 					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 1200 120"
-					preserveAspectRatio="none"
-					className="relative block w-[calc(128%+1.3px)] h-54"
+					id="Layer_1"
+					className=" w-5 h-5 fill-success"
+					viewBox="0 0 122.88 101.6"
 				>
-					<path
-						d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-						className="fill-[#F1B4B4]"
-					></path>
+					<title>tick-green</title>
+					<path d="M4.67,67.27c-14.45-15.53,7.77-38.7,23.81-24C34.13,48.4,42.32,55.9,48,61L93.69,5.3c15.33-15.86,39.53,7.42,24.4,23.36L61.14,96.29a17,17,0,0,1-12.31,5.31h-.2a16.24,16.24,0,0,1-11-4.26c-9.49-8.8-23.09-21.71-32.91-30v0Z" />
 				</svg>
-			</div>
+			)}
 		</>
 	);
 }
