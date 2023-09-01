@@ -371,7 +371,7 @@ export const ticketRouter = t.router({
 			});
 
 			if (ticket?.checkedInAt !== null) {
-				return new TRPCError({
+				throw new TRPCError({
 					code: 'CONFLICT',
 					message: 'Already checked In'
 				});
