@@ -2,7 +2,7 @@ import type { TRPCError } from '@trpc/server';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { trpc } from '../../../utils/trpc';
+import { trpc } from '../../utils/trpc';
 
 const ValidatePage: NextPage = () => {
 	const router = useRouter();

@@ -41,6 +41,7 @@ const EventForm: React.FC<Props> = ({ closeModal }) => {
 	const root = useRef(null);
 	const [startDate, setStartDate] = useState<Date>(new Date());
 	const { data: session } = useSession();
+	const utils = trpc.useContext();
 
 	const mutation = trpc.event.createEvent.useMutation();
 
@@ -77,6 +78,7 @@ const EventForm: React.FC<Props> = ({ closeModal }) => {
 					},
 					{
 						onSuccess: () => {
+							utils.event.getEvents.invalidate();
 							closeModal();
 						}
 					}

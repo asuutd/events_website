@@ -29,6 +29,7 @@
     "@trpc/server": "10.0.0-proxy-beta.2",
     "class-variance-authority": "^0.6.1",
     "clsx": "^2.0.0",
+    "cuid": "^3.0.0",
     "daisyui": "^3.2.1",
     "date-fns": "^2.30.0",
     "formik": "^2.4.2",

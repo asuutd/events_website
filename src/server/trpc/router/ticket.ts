@@ -255,7 +255,10 @@ export const ticketRouter = t.router({
 	getTicket: authedProcedure.query(({ ctx }) => {
 		return ctx.prisma.ticket.findMany({
 			where: {
-				userId: ctx.session.user.id
+				userId: ctx.session.user.id,
+				paymentIntent: {
+					not: undefined
+				}
 			},
 			include: {
 				event: true,
