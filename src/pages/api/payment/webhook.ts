@@ -39,22 +39,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					const tiers = JSON.parse(metadata.tiers ?? '{}');
 					const dataArray: string[] = [];
 					const userId = metadata.userId;
-
-					for (const tier of tiers) {
-						for (let i = 0; i < tier.quantity; ++i) {
-							if (metadata.ticketId && userId) {
-								const ticketId = metadata.ticketId;
-								dataArray.push(ticketId);
-							}
-						}
-					}
-					console.log(dataArray);
+					const user_ticket_ids = metadata.ticketIds && JSON.parse(metadata.ticketIds);
+					console.log(user_ticket_ids);
 
 					//Update the payment intent data
 					await prisma.ticket.updateMany({
 						where: {
 							id: {
-								in: dataArray
+								in: user_ticket_ids
 							}
 						},
 						data: {
