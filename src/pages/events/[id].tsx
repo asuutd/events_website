@@ -18,6 +18,7 @@ import { NextSeo } from 'next-seo';
 import { env } from '../../env/client.mjs';
 import Image from 'next/image';
 import Display from '@/components/Map/Display';
+import parse from 'html-react-parser';
 
 type Ticket = {
 	tier: Tier;
@@ -247,7 +248,7 @@ const Event: NextPage<{
 							<>
 								<h2 className="text-4xl text-primary font-bold  my-6">Description</h2>
 
-								<p>{event.data?.description}</p>
+								<div>{parse(event.data.description)}</div>
 							</>
 						)}
 
