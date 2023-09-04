@@ -83,6 +83,7 @@ model Event {
   name         String
   image        String?
   ticketImage  String?
+  description  String? @db.Text
   ref_quantity Int?
   tickets      Ticket[]
   RefCode      RefCode[]
@@ -146,6 +147,7 @@ model Tier {
   end     DateTime
   eventId String
   name    String
+  limit         Int?
   code    Code[]
   event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   Ticket  Ticket[]

@@ -56,6 +56,13 @@ export const paymentRouter = t.router({
 												}
 											}
 										]
+									},
+									include: {
+										_count: {
+											select: {
+												Ticket: true
+											}
+										}
 									}
 								},
 								organizer: true,
@@ -81,6 +88,21 @@ export const paymentRouter = t.router({
 					: null
 			]);
 			console.log(event);
+			input.tiers.forEach((tier) => {
+				const foundTier = event?.Tier.find((dbTier) => dbTier.id === tier.tierId);
+				if (foundTier) {
+					if (
+						foundTier._count.Ticket + tier.quantity >
+						(foundTier.limit ?? Number.MAX_SAFE_INTEGER)
+					) {
+						throw new TRPCError({
+							code: 'CONFLICT',
+							message: 'The ticket quantity is greater than the limit'
+						});
+					}
+				}
+			});
+
 			let total = 0;
 			if (event?.Tier && event.organizer?.stripeAccountId) {
 				const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];

@@ -30,6 +30,13 @@ export const eventRouter = t.router({
 									}
 								}
 							]
+						},
+						include: {
+							_count: {
+								select: {
+									Ticket: true
+								}
+							}
 						}
 					},
 					location: true,

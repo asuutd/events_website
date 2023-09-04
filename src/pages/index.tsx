@@ -6,6 +6,7 @@ import TypeWriter from 'typewriter-effect';
 import { trpc } from '@/utils/trpc';
 import Image from 'next/image';
 import { format } from 'date-fns';
+
 const Home: NextPage = () => {
 	return (
 		<>
@@ -58,18 +59,18 @@ const EventCards = () => {
 			{client.isLoading ? (
 				<>
 					<div className="card w-72 sm:w-96 bg-base-100 animate-pulse shadow-xl my-4 mx-auto h-96" />
-					<div className="card w-72 sm:w-96 bg-base-100 animate-pulse shadow-xl my-4 mx-auto" />
+					<div className="card w-72 sm:w-96 bg-base-100 animate-pulse shadow-xl my-4 mx-auto h-96" />
 				</>
 			) : (
 				client.data?.map((event) => (
 					<div className="card w-72 sm:w-96 bg-base-100 shadow-xl my-4 mx-auto" key={event.id}>
 						<figure className="px-10 pt-10">
 							<Image
-								src={event.image ?? ''}
+								src={event.ticketImage ?? ''}
 								alt="Shoes"
-								className="rounded-xl object-cover"
+								className="rounded-xl object-cover aspect-square"
 								width={400}
-								height={300}
+								height={400}
 							/>
 						</figure>
 						<div className="card-body items-center text-center">
@@ -80,7 +81,7 @@ const EventCards = () => {
 							</div>
 						</div>
 						<div className="card-actions justify-end">
-							<Link href={`/events/${event.id}`}>
+							<Link href={`/events/${event.id}`} shallow={true}>
 								<a className="btn btn-primary rounded-tr-none rounded-bl-none">Get Tickets</a>
 							</Link>
 						</div>
