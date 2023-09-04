@@ -243,6 +243,13 @@ const Event: NextPage<{
 								</div>
 							</div>
 						</div>
+						{event.data?.description && (
+							<>
+								<h2 className="text-4xl text-primary font-bold  my-6">Description</h2>
+
+								<p>{event.data?.description}</p>
+							</>
+						)}
 
 						<h2 className="text-4xl text-primary font-bold  my-6">Tickets</h2>
 
@@ -291,7 +298,6 @@ const Event: NextPage<{
 								CHECKOUT
 							</label>
 						)}
-						<p>{event.data?.description}</p>
 
 						<Modal isOpen={isOpen} closeModal={closeModal}>
 							<TicketSummary
@@ -332,7 +338,7 @@ const TierCard = ({
 	setTicketQuantity: (val: number, dir: UpOrDown, tier: Tier) => void;
 	quantity: number;
 }) => {
-	const soldOut = !React.useMemo(() => {
+	const soldOut = React.useMemo(() => {
 		return tier._count.Ticket == (tier.limit ?? Number.MAX_SAFE_INTEGER);
 	}, [tier]);
 	return (
