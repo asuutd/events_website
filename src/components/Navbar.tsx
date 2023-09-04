@@ -39,7 +39,7 @@ const Navbar = () => {
 		<div className="navbar">
 			<div className="flex-1">
 				<Link className="btn btn-ghost normal-case text-xl" href="/">
-					<div className="flex items-end">
+					<button className="flex items-end">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="185"
@@ -67,7 +67,7 @@ const Navbar = () => {
 							/>
 						</svg>
 						<a className="flex items-center gap-1  font-bold text-2xl">azala</a>
-					</div>
+					</button>
 				</Link>
 			</div>
 			<div className="flex-none gap-2">

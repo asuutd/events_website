@@ -83,7 +83,8 @@ const TicketSummary = ({
 					window.open(url, '_self');
 					setStripeLoading(false);
 				},
-				onError: () => {
+				onError: ({ message }) => {
+					alert(message);
 					setStripeLoading(false);
 				}
 			}

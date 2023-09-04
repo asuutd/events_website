@@ -18,6 +18,7 @@ import { NextSeo } from 'next-seo';
 import { env } from '../../env/client.mjs';
 import Image from 'next/image';
 import Display from '@/components/Map/Display';
+import parse from 'html-react-parser';
 
 type Ticket = {
 	tier: Tier;
@@ -243,6 +244,13 @@ const Event: NextPage<{
 								</div>
 							</div>
 						</div>
+						{event.data?.description && (
+							<>
+								<h2 className="text-4xl text-primary font-bold  my-6">Description</h2>
+
+								<div>{parse(event.data.description)}</div>
+							</>
+						)}
 
 						<h2 className="text-4xl text-primary font-bold  my-6">Tickets</h2>
 
@@ -291,7 +299,6 @@ const Event: NextPage<{
 								CHECKOUT
 							</label>
 						)}
-						<p>{event.data?.description}</p>
 
 						<Modal isOpen={isOpen} closeModal={closeModal}>
 							<TicketSummary
@@ -332,7 +339,7 @@ const TierCard = ({
 	setTicketQuantity: (val: number, dir: UpOrDown, tier: Tier) => void;
 	quantity: number;
 }) => {
-	const soldOut = !React.useMemo(() => {
+	const soldOut = React.useMemo(() => {
 		return tier._count.Ticket == (tier.limit ?? Number.MAX_SAFE_INTEGER);
 	}, [tier]);
 	return (
