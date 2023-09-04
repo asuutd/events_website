@@ -255,7 +255,10 @@ export const ticketRouter = t.router({
 	getTicket: authedProcedure.query(({ ctx }) => {
 		return ctx.prisma.ticket.findMany({
 			where: {
-				userId: ctx.session.user.id
+				userId: ctx.session.user.id,
+				paymentIntent: {
+					not: undefined
+				}
 			},
 			include: {
 				event: true,
@@ -368,6 +371,10 @@ export const ticketRouter = t.router({
 			});
 
 			if (ticket?.checkedInAt !== null) {
+				throw new TRPCError({
+					code: 'CONFLICT',
+					message: 'Already checked In'
+				});
 			}
 
 			return ctx.prisma.ticket.update({

@@ -36,66 +36,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					console.log('HERE');
 					const paymentIntentData = event.data.object as Stripe.PaymentIntent;
 					const metadata = paymentIntentData.metadata;
-					const tiers = JSON.parse(metadata.tiers ?? "{}");
-					const dataArray: Prisma.TicketCreateManyInput[] = [];
-					let refCodeId: number | null = null;
-
-					let sameOwner = false;
+					const tiers = JSON.parse(metadata.tiers ?? '{}');
+					const dataArray: string[] = [];
 					const userId = metadata.userId;
-
-					const [refCode, code] = await Promise.all([
-						metadata.refCodeId
-							? prisma.refCode.findFirst({
-									where: {
-										code: metadata.refCodeId
-									},
-									select: {
-										id: true,
-										userId: true
-									}
-							  })
-							: null,
-						metadata.codeId
-							? prisma.code.findFirst({
-									where: {
-										code: metadata.codeId
-									}
-							  })
-							: null
-					]);
-					if (refCode) refCodeId = refCode.id;
-					if (userId === refCode?.userId) sameOwner = true;
 
 					for (const tier of tiers) {
 						for (let i = 0; i < tier.quantity; ++i) {
-							if(metadata.eventId && userId){
-								const ticket = {
-									userId: userId,
-									eventId: metadata.eventId,
-									tierId: tier.tierId,
-									paymentIntent: paymentIntentData.id,
-									...(code //Make sure to change this. Code should be serched before creating ticket
-										? {
-												codeId: code.id
-										  }
-										: {}),
-									...(refCodeId && !sameOwner
-										? {
-												refCodeId: refCodeId
-										  }
-										: {})
-								};
-								dataArray.push(ticket);
+							if (metadata.ticketId && userId) {
+								const ticketId = metadata.ticketId;
+								dataArray.push(ticketId);
 							}
-							
 						}
 					}
 					console.log(dataArray);
-					await prisma.ticket.createMany({
-						data: dataArray
+
+					//Update the payment intent data
+					await prisma.ticket.updateMany({
+						where: {
+							id: {
+								in: dataArray
+							}
+						},
+						data: {
+							paymentIntent: paymentIntentData.id
+						}
 					});
 					res.status(200).json({ received: true });
 					break;
+				case 'checkout.session.expired':
+					const checkoutData = event.data.object as any;
+
+					const checkoutMetadata = checkoutData.metadata as Record<string, string | undefined>;
+					const ticketIds = checkoutMetadata.ticketIds && JSON.parse(checkoutMetadata.ticketIds);
+					await prisma.ticket.deleteMany({
+						where: {
+							id: {
+								in: ticketIds
+							}
+						}
+					});
+					res.status(200).send('Noice');
+					break;
+				//Fix up refunds. Should differentiate between
 				case 'charge.refunded':
 					const chargeData = event.data.object as Stripe.Charge;
 					console.log(chargeData.metadata.ticketId);

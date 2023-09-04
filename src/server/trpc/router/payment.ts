@@ -4,7 +4,8 @@ import { t, authedProcedure } from '../trpc';
 import stripe, { calculateApplicationFee } from '@/utils/stripe';
 import { env } from '@/env/server.mjs';
 import Stripe from 'stripe';
-import { SERVICE_PERCENTAGE } from '@/utils/constants';
+import { Prisma } from '@prisma/client';
+import cuid from 'cuid';
 
 export const paymentRouter = t.router({
 	createCheckoutLink: authedProcedure
@@ -41,7 +42,7 @@ export const paymentRouter = t.router({
 										AND: [
 											{
 												id: {
-													in: input.tiers.map((tier: any) => tier.tierId)
+													in: input.tiers.map((tier) => tier.tierId)
 												}
 											},
 											{
@@ -55,9 +56,21 @@ export const paymentRouter = t.router({
 												}
 											}
 										]
+									},
+									include: {
+										_count: {
+											select: {
+												Ticket: true
+											}
+										}
 									}
 								},
-								organizer: true
+								organizer: true,
+								RefCode: {
+									where: {
+										code: input.refCodeId
+									}
+								}
 							}
 					  })
 					: null,
@@ -75,6 +88,21 @@ export const paymentRouter = t.router({
 					: null
 			]);
 			console.log(event);
+			input.tiers.forEach((tier) => {
+				const foundTier = event?.Tier.find((dbTier) => dbTier.id === tier.tierId);
+				if (foundTier) {
+					if (
+						foundTier._count.Ticket + tier.quantity >
+						(foundTier.limit ?? Number.MAX_SAFE_INTEGER)
+					) {
+						throw new TRPCError({
+							code: 'CONFLICT',
+							message: 'The ticket quantity is greater than the limit'
+						});
+					}
+				}
+			});
+
 			let total = 0;
 			if (event?.Tier && event.organizer?.stripeAccountId) {
 				const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
@@ -97,7 +125,7 @@ export const paymentRouter = t.router({
 					total +=
 						Number(unit_amount.toFixed(2)) *
 						100 *
-						(input.tiers.find((tier2: any) => tier2.tierId === tier.id)?.quantity || 1);
+						(input.tiers.find((tier2) => tier2.tierId === tier.id)?.quantity || 1);
 					console.log(total);
 					const line_item = {
 						// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
@@ -113,7 +141,7 @@ export const paymentRouter = t.router({
 							},
 							unit_amount: unit_amount * 100
 						},
-						quantity: input.tiers.find((tier2: any) => tier2.tierId === tier.id)?.quantity || 1
+						quantity: input.tiers.find((tier2) => tier2.tierId === tier.id)?.quantity || 1
 					};
 					line_items.push(line_item);
 					if (code && tier.id === code.tierId) {
@@ -121,6 +149,37 @@ export const paymentRouter = t.router({
 					}
 				});
 				console.log(line_items);
+
+				const sameOwner = ctx.session.user.id === input?.refCodeId;
+				const dataArray: Prisma.TicketCreateManyInput[] = [];
+
+				for (const tier of input.tiers) {
+					for (let i = 0; i < tier.quantity; ++i) {
+						if (input.eventId && ctx.session.user.id) {
+							const ticket = {
+								id: cuid(),
+								userId: ctx.session.user.id,
+								eventId: input.eventId,
+								tierId: tier.tierId,
+								...(code //Make sure to change this. Code should be serched before creating ticket
+									? {
+											codeId: code.id
+									  }
+									: {}),
+								...(event.RefCode[0] && input.refCodeId && !sameOwner
+									? {
+											refCodeId: event.RefCode[0].id
+									  }
+									: {})
+							};
+							dataArray.push(ticket);
+						}
+					}
+				}
+				console.log(dataArray);
+				await ctx.prisma.ticket.createMany({
+					data: dataArray
+				});
 
 				const session = await stripe.checkout.sessions.create({
 					line_items: line_items,
@@ -133,7 +192,8 @@ export const paymentRouter = t.router({
 						tiers: JSON.stringify(input.tiers),
 						codeId: input.codeId ?? '',
 						refCodeId: input.refCodeId ?? '',
-						userId: ctx.session.user.id
+						userId: ctx.session.user.id,
+						ticketIds: JSON.stringify(dataArray.map((ticket) => ticket.id))
 					},
 					payment_intent_data: {
 						application_fee_amount: Math.ceil(calculateApplicationFee(total)),
@@ -145,9 +205,11 @@ export const paymentRouter = t.router({
 							tiers: JSON.stringify(input.tiers),
 							codeId: input.codeId ?? '',
 							refCodeId: input.refCodeId ?? '',
-							userId: ctx.session.user.id
+							userId: ctx.session.user.id,
+							ticketIds: JSON.stringify(dataArray.map((ticket) => ticket.id))
 						}
-					}
+					},
+					expires_at: Math.floor(Date.now() / 1000) + 30 * 60
 				});
 				if (session.url) {
 					return {

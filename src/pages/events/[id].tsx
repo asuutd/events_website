@@ -1,4 +1,4 @@
-import type { Tier } from '@prisma/client';
+import type { Tier, Event } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -248,35 +248,13 @@ const Event: NextPage<{
 
 						{event.data ? (
 							event.data.Tier.map((tier) => (
-								<div className="card max-w-md bg-base-100 shadow-xl my-4" key={tier.id}>
-									<div className="card-body">
-										<h2 className="card-title text-2xl">{tier.name}</h2>
-										<div className="w-32">
-											<Timer className="px-1 text-sm" endTime={tier?.end} />
-										</div>
-
-										<div className="card-actions justify-end">
-											<div className="text-secondary text-lg font-semibold">${tier.price}</div>
-											<div className="flex items-center gap-1">
-												<img
-													src="/minus.svg"
-													alt=""
-													className="w-6 h-6 cursor-pointer"
-													onClick={() => setTicketQuantity(quantity - 1, UpOrDown.Desc, tier)}
-												/>
-												<div className="w-8 text-center">
-													{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
-												</div>
-												<img
-													src="/plus.svg"
-													alt=""
-													className="w-6 h-6 cursor-pointer"
-													onClick={() => setTicketQuantity(quantity + 1, UpOrDown.Asc, tier)}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
+								<TierCard
+									key={tier.id}
+									tier={tier}
+									tickets={tickets}
+									quantity={quantity}
+									setTicketQuantity={setTicketQuantity}
+								/>
 							))
 						) : (
 							<div className="flex flex-col lg:flex-row justify-between w-72 h-40 lg:h-auto animate-pulse gap-8 text-3xl items-center bg-base-200 px-4 py-8 rounded-md shadow-md my-3"></div>
@@ -313,6 +291,7 @@ const Event: NextPage<{
 								CHECKOUT
 							</label>
 						)}
+						<p>{event.data?.description}</p>
 
 						<Modal isOpen={isOpen} closeModal={closeModal}>
 							<TicketSummary
@@ -338,6 +317,61 @@ const Event: NextPage<{
 
 export default Event;
 
+const TierCard = ({
+	tier,
+	tickets,
+	setTicketQuantity,
+	quantity
+}: {
+	tier: Tier & {
+		_count: {
+			Ticket: number;
+		};
+	};
+	tickets: Ticket[];
+	setTicketQuantity: (val: number, dir: UpOrDown, tier: Tier) => void;
+	quantity: number;
+}) => {
+	const soldOut = !React.useMemo(() => {
+		return tier._count.Ticket == (tier.limit ?? Number.MAX_SAFE_INTEGER);
+	}, [tier]);
+	return (
+		<div
+			className={` card max-w-md bg-base-100 shadow-xl my-4 ${soldOut ? 'grayscale' : ''}`}
+			key={tier.id}
+		>
+			<div className="card-body">
+				<h2 className="card-title text-2xl">{tier.name}</h2>
+				{soldOut && <div className="w-32">(Sold Out)</div>}
+				<div className="w-32">
+					<Timer className="px-1 text-sm" endTime={tier?.end} />
+				</div>
+
+				<div className="card-actions justify-end">
+					<div className="text-secondary text-lg font-semibold">${tier.price}</div>
+					<div className="flex items-center gap-1">
+						<button
+							disabled={soldOut}
+							onClick={() => setTicketQuantity(quantity - 1, UpOrDown.Desc, tier)}
+						>
+							<img src="/minus.svg" alt="" className="w-6 h-6 cursor-pointer" />
+						</button>
+
+						<div className="w-8 text-center">
+							{tickets.find((ticket) => ticket.tier.id === tier.id)?.quantity || 0}
+						</div>
+						<button
+							disabled={soldOut}
+							onClick={() => setTicketQuantity(quantity + 1, UpOrDown.Asc, tier)}
+						>
+							<img src="/plus.svg" alt="" className="w-6 h-6 cursor-pointer" />
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
 	const id = typeof query.id === 'string' ? query.id : query.id == undefined ? ':)' : query.id[0]!;
 	res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');

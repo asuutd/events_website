@@ -30,6 +30,13 @@ export const eventRouter = t.router({
 									}
 								}
 							]
+						},
+						include: {
+							_count: {
+								select: {
+									Ticket: true
+								}
+							}
 						}
 					},
 					location: true,
@@ -99,7 +106,12 @@ export const eventRouter = t.router({
 										}
 									}
 							  }
-							: {})
+							: {}),
+						EventAdmin: {
+							create: {
+								userId: ctx.session.user.id
+							}
+						}
 					}
 				});
 				return newEvent;

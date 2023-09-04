@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import Image from 'next/future/image';
 import { useSession } from 'next-auth/react';
 import VanillaTilt from 'vanilla-tilt';
+import { env } from '@/env/client.mjs';
 
 function classNames(...classes: string[]) {
 	return classes.filter(Boolean).join(' ');
@@ -38,7 +39,7 @@ const TicketSummary = ({ ticket }: { ticket?: TicketWithEventData }) => {
 				console.error(err);
 			}
 		};
-		generateQR(`https://events.utd-asu.com/tickets/${ticket.id}/validate`);
+		generateQR(`${env.NEXT_PUBLIC_URL}/tickets/validate?id=${ticket.id}&eventId=${ticket.eventId}`);
 	}, []);
 	const root = useRef(null);
 	useEffect(() => {

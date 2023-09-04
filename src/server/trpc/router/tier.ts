@@ -90,13 +90,15 @@ export const tierRouter = t.router({
 
 			if (input.startTime && tier.end < input.startTime) {
 				throw new TRPCError({
-					code: 'BAD_REQUEST'
+					code: 'BAD_REQUEST',
+					message: "Can't DO THIS"
 				});
 			}
 
 			if (input.endTime && tier.start > input.endTime) {
 				throw new TRPCError({
-					code: 'BAD_REQUEST'
+					code: 'BAD_REQUEST',
+					message: "Can't DO THIS"
 				});
 			}
 

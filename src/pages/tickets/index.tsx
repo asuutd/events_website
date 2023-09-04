@@ -95,11 +95,11 @@ const Ticket: NextPage = () => {
 						<Tab.Panels className="mt-2 w-full">
 							<Tab.Panel
 								className={classNames(
-									'rounded-xl bg-white p-3',
+									'rounded-xl p-3 mx-auto',
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 								)}
 							>
-								<div className="flex flex-wrap gap-8 bg-white">
+								<div className="md:grid md:grid-cols-2 gap-8">
 									{upcoming.length > 0 ? (
 										upcoming.map((ticket) => (
 											<TicketCard
@@ -121,11 +121,11 @@ const Ticket: NextPage = () => {
 
 							<Tab.Panel
 								className={classNames(
-									'rounded-xl bg-white p-3',
+									'rounded-xl p-3 mx-auto',
 									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
 								)}
 							>
-								<div className="flex flex-wrap gap-8 bg-white grayscale-45">
+								<div className="md:grid mx-auto md:grid-cols-2 gap-8 grayscale-45">
 									{past.length > 0 ? (
 										past.map((ticket) => (
 											<TicketCard
@@ -175,7 +175,7 @@ function TicketCard(props: {
 				onClick={onClick}
 				key={ticket.id}
 				className={classNames(
-					'border relative rounded-md bg-white my-3 w-80 hover:scale-110 transition-all text-black shadow-xl hover:shadow-2xl hover:cursor-pointer',
+					'border mx-auto relative rounded-md bg-white my-3 w-80 hover:scale-110 transition-all text-black shadow-xl hover:shadow-2xl hover:cursor-pointer',
 					hide ? 'opacity-0 invisible' : 'opacity-100'
 				)}
 			>
