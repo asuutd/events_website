@@ -133,7 +133,7 @@ const Event: NextPage<{
 				title={props?.meta?.title ?? 'Event'}
 				openGraph={{
 					title: `${props?.meta?.title}` ?? 'Event',
-					description: `Evetn Details of ${props?.meta?.title}`,
+					description: `Event Details of ${props?.meta?.title}`,
 					url: `https://${env.NEXT_PUBLIC_URL}/seller/${props.meta?.id}`,
 					type: 'profile',
 					profile: {
