@@ -110,7 +110,7 @@ const RefCode = ({
 										const url = new URL(link);
 										url.searchParams.set('refCode', refCode.data.code);
 										navigator.clipboard
-											.writeText(link)
+											.writeText(url.toString())
 											.then(() => {
 												setRefMsg('Copied!');
 												resetMsg();
