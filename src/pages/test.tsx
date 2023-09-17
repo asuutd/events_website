@@ -108,8 +108,6 @@ export default function Test() {
 		return uuidv4();
 	}, []);
 
-	const onError = (errorMessage: string, error: Html5QrcodeError) => {};
-
 	return <></>;
 }
 
