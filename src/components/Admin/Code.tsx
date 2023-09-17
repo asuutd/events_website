@@ -35,7 +35,7 @@ const Code = ({ eventId }: { eventId: string }) => {
 						{/* row 1 */}
 						{codes.data?.map((code) => (
 							<tr key={code.id}>
-								<td>{code.code}</td>
+								<td>{code._count.tickets < code.limit ? <>{code.code}</> : <s>{code.code}</s>}</td>
 								<td>{code.tier.name}</td>
 								<td>{code.type === 'percent' ? <>{code.value * 100}%</> : <>${code.value}</>}</td>
 								<td>

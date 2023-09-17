@@ -10,15 +10,16 @@ function classNames(...classes: any[]) {
 }
 const EventsDetailsPage = () => {
 	const router = useRouter();
-	const { id, refCode } = router.query;
+	const { id, activeTab } = router.query;
 
 	const eventId: string = typeof id === 'string' ? id : id == undefined ? ':)' : id[0]!;
+	const activeTabInt = typeof activeTab === 'string' ? parseInt(activeTab) : undefined;
 
 	return (
 		<div>
 			<div className="mx-auto">
 				<div className="mx-auto">
-					<Tab.Group>
+					<Tab.Group defaultIndex={activeTabInt}>
 						<Tab.List className="stats shadow mx-auto flex max-w-2xl">
 							<Tab className={({ selected }) => classNames('stat', selected ? 'bg-base-200' : '')}>
 								<div className="stat-figure text-secondary">
@@ -98,7 +99,7 @@ const EventsDetailsPage = () => {
 								<TicketTable eventId={eventId} />
 							</Tab.Panel>
 
-							<Tab.Panel className="">
+							<Tab.Panel className="" onClick={(e) => console.log(e)}>
 								<Tiers eventId={eventId} />
 							</Tab.Panel>
 
