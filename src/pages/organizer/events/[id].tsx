@@ -99,7 +99,7 @@ const EventsDetailsPage = () => {
 								<TicketTable eventId={eventId} />
 							</Tab.Panel>
 
-							<Tab.Panel className="" onClick={(e) => console.log(e)}>
+							<Tab.Panel className="">
 								<Tiers eventId={eventId} />
 							</Tab.Panel>
 
