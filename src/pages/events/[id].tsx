@@ -69,11 +69,14 @@ const Event: NextPage<{
 	function openModal() {
 		setIsOpen(true);
 	}
-	const { id, refCode } = router.query;
+	const { id, refCode, code } = router.query;
 
 	const eventId: string = typeof id === 'string' ? id : id == undefined ? ':)' : id[0]!;
 	const ref: string | undefined =
 		typeof refCode === 'string' ? refCode : refCode == undefined ? undefined : refCode[0]!;
+
+	const discountCode: string | undefined =
+		typeof code === 'string' ? code : code == undefined ? undefined : code[0]!;
 
 	const event = trpc.event.getEvent.useQuery(
 		{ eventId: eventId },
@@ -83,7 +86,7 @@ const Event: NextPage<{
 	);
 
 	useEffect(() => {
-		console.log(id);
+		console.log(id, code);
 	}, [router]);
 
 	const setTicketQuantity = (val: number, dir: UpOrDown, tier: Tier) => {
@@ -306,6 +309,7 @@ const Event: NextPage<{
 								tickets={tickets}
 								eventId={eventId}
 								refCodeQuery={ref}
+								discountCode={discountCode}
 							/>
 						</Modal>
 

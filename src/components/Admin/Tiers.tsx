@@ -61,6 +61,7 @@ const TierCard = ({ tier }: { tier: Tier }) => {
 		}
 	});
 	const mutation = trpc.tier.editTier.useMutation();
+	const utils = trpc.useContext();
 
 	const onSubmit = (fields: FormInput) => {
 		mutation.mutate(
@@ -73,7 +74,7 @@ const TierCard = ({ tier }: { tier: Tier }) => {
 			},
 			{
 				onSuccess: () => {
-					trpc.useContext().tier.getTiersAdmin.refetch();
+					utils.tier.getTiersAdmin.invalidate();
 				}
 			}
 		);

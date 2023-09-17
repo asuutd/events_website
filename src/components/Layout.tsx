@@ -21,7 +21,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 				<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 			</Head>
 			<Navbar />
-			<div className="min-h-full max-w-4xl mx-auto p-4">{children}</div>
+			<div className="min-h-full max-w-7xl mx-auto p-4">{children}</div>
 			<input type="checkbox" id="my-modal-4" className="modal-toggle" />
 			<label htmlFor="my-modal-4" className="modal cursor-pointer">
 				<label className="modal-box relative w-72" htmlFor="">

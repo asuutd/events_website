@@ -14,12 +14,14 @@ const TicketSummary = ({
 	tickets,
 	eventId,
 	isOpen,
-	refCodeQuery
+	refCodeQuery,
+	discountCode
 }: {
 	tickets: Ticket[];
 	eventId: string;
 	isOpen: boolean;
 	refCodeQuery: string | undefined;
+	discountCode: string | undefined;
 }) => {
 	const checkoutQuery = trpc.payment.createCheckoutLink.useMutation();
 	const codeQuery = trpc.code.getCode.useMutation({
@@ -93,7 +95,7 @@ const TicketSummary = ({
 
 	const [total, setTotal] = useState<number>(0);
 
-	const [code, setCode] = useState<string>('');
+	const [code, setCode] = useState<string | undefined>();
 	const [refCode, setrefCode] = useState<string | undefined>(refCodeQuery);
 	useEffect(() => {
 		let val = 0;
@@ -126,7 +128,7 @@ const TicketSummary = ({
 						placeholder="PROMO CODE"
 						onChange={(e) => setCode(e.target.value)}
 						onBlur={() => {
-							code !== '' && codeQuery.mutate({ code: code });
+							code && codeQuery.mutate({ code: code });
 						}}
 					/>
 					<input
